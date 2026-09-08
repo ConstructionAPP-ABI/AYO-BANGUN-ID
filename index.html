@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#16232c">
+<title>Ayo Bangun.ID Contractor — POS Proyek Konstruksi</title>
+<link rel="icon" href="logo-ayo-bangun.jpeg">
+<style>
+:root{
+  --bg:#16232c; --bg2:#1d2f3b; --bg3:#24394a; --card:#1c2c38; --line:#2e4657;
+  --gold:#d9a441; --gold2:#f0c169; --text:#eef4f8; --muted:#93a7b5;
+  --green:#3fbf7f; --red:#e0605e; --blue:#4aa3e0; --orange:#e8a13c;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:15px}
+a{color:var(--gold2)}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:15px;background:var(--bg3);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+label{font-size:12px;color:var(--muted);display:block;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.btn{background:var(--gold);color:#1a1206;border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:15px}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn.danger{background:transparent;border:1px solid var(--red);color:var(--red)}
+.btn.small{padding:6px 12px;font-size:13px;border-radius:8px}
+.btn.blue{background:var(--blue);color:#08131c}
+.btn.green{background:var(--green);color:#08130d}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.b-green{background:rgba(63,191,127,.15);color:var(--green)}
+.b-red{background:rgba(224,96,94,.15);color:var(--red)}
+.b-blue{background:rgba(74,163,224,.15);color:var(--blue)}
+.b-orange{background:rgba(232,161,60,.15);color:var(--orange)}
+.b-grey{background:rgba(147,167,181,.15);color:var(--muted)}
+.muted{color:var(--muted)}
+h2{font-size:18px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+h2 .ico{font-size:22px}
+/* LAYOUT */
+#app{display:none;min-height:100vh}
+#topbar{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px}
+#topbar img{width:34px;height:34px;border-radius:8px}
+#topbar .t{flex:1;min-width:0}
+#topbar .t b{font-size:15px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#topbar .t span{font-size:11.5px;color:var(--muted)}
+#projSel{max-width:170px;padding:7px 10px;font-size:13px}
+#wrap{display:flex;max-width:1100px;margin:0 auto}
+#side{width:230px;flex-shrink:0;padding:14px 10px;border-right:1px solid var(--line);min-height:calc(100vh - 56px)}
+#side a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:var(--text);text-decoration:none;font-size:14px;margin-bottom:3px}
+#side a.on{background:var(--bg3);color:var(--gold2);font-weight:700;border-left:3px solid var(--gold)}
+#main{flex:1;padding:16px;min-width:0;padding-bottom:90px}
+/* LOGIN */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#20333f,#16232c 70%);padding:20px}
+#login .box{width:100%;max-width:380px;text-align:center}
+#login img{width:120px;height:120px;border-radius:24px;margin-bottom:14px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#login h1{font-size:22px;color:var(--gold2);letter-spacing:.5px}
+#login p.sub{color:var(--muted);font-size:12.5px;margin:4px 0 18px;letter-spacing:2px;text-transform:uppercase}
+#login .card{text-align:left}
+#login .foot{margin-top:14px;font-size:11.5px;color:var(--muted)}
+/* DASHBOARD */
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.stat .s{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat .s b{font-size:20px;display:block;color:var(--gold2)}
+.stat .s span{font-size:11.5px;color:var(--muted)}
+.list-item{display:flex;gap:10px;align-items:flex-start;padding:10px 4px;border-bottom:1px solid var(--line)}
+.list-item:last-child{border-bottom:none}
+.list-item .g{flex:1;min-width:0}
+.list-item .a{display:flex;gap:6px}
+.progressbar{height:8px;background:var(--bg3);border-radius:6px;overflow:hidden;margin-top:6px}
+.progressbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tabs button{background:var(--bg3);border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:600}
+.tabs button.on{background:var(--gold);color:#1a1206;border-color:var(--gold)}
+/* BOTTOM NAV mobile */
+#bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--line);z-index:60;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+#bnav a{flex:1;text-align:center;color:var(--muted);text-decoration:none;font-size:10.5px;padding:4px 0}
+#bnav a span{display:block;font-size:19px}
+#bnav a.on{color:var(--gold2)}
+/* MODAL */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:none;align-items:flex-end;justify-content:center}
+#modal .m{background:var(--bg2);border:1px solid var(--line);border-radius:18px 18px 0 0;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;padding:20px}
+#modal .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+#modal .mh b{font-size:17px}
+@media(max-width:820px){
+  #side{display:none}
+  #bnav{display:flex}
+  #main{padding-bottom:96px}
+}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:80px;background:var(--gold);color:#1a1206;padding:11px 22px;border-radius:24px;font-weight:700;z-index:200;display:none;box-shadow:0 6px 24px rgba(0,0,0,.4);font-size:14px}
+.hdr-line{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap}
+.pill{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="box">
+    <img src="logo-ayo-bangun.jpeg" alt="Ayo Bangun">
+    <h1>Ayo Bangun.ID</h1>
+    <p style="color:var(--muted);font-size:14px;margin-top:2px">Contractor · POS Proyek Konstruksi</p>
+    <p class="sub">Developer &amp; Construction</p>
+    <div class="card">
+      <label>Username</label>
+      <input id="lgUser" placeholder="Masukkan username" autocomplete="username">
+      <label>Password</label>
+      <input id="lgPass" type="password" placeholder="Masukkan password" autocomplete="current-password">
+      <div style="height:14px"></div>
+      <button class="btn" style="width:100%" onclick="doLogin()">🔐 Masuk Aplikasi</button>
+      <div id="lgErr" style="color:var(--red);font-size:13px;margin-top:10px;text-align:center"></div>
+    </div>
+    <div class="foot">Default — Owner: <b>owner / owner123</b> · Admin: <b>admin / 0000</b><br>Password dapat diubah di menu Pengaturan.</div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <img src="logo-ayo-bangun.jpeg" alt="logo">
+    <div class="t"><b>Ayo Bangun.ID Contractor</b><span id="tbUser"></span></div>
+    <select id="projSel" onchange="switchProject(this.value)" title="Pilih Proyek"></select>
+    <span id="syncDot" class="pill" title="Status sinkronisasi">● lokal</span>
+    <button class="btn ghost small" onclick="doLogout()" title="Keluar">⏻</button>
+  </div>
+  <div id="wrap">
+    <div id="side"></div>
+    <div id="main"></div>
+  </div>
+  <div id="bnav"></div>
+</div>
+
+<div id="modal"><div class="m">
+  <div class="mh"><b id="mTitle"></b><button class="btn ghost small" onclick="closeModal()">✕ Tutup</button></div>
+  <div id="mBody"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================================================================
+   AYO BANGUN.ID CONTRACTOR — POS PROYEK KONSTRUKSI
+   Multi-proyek · Multi-user (Owner/Admin/Mandor) · Firebase sync
+   ================================================================ */
+const DBKEY='abpos_v1', SESKEY='abpos_session';
+let S=null, FB={db:null,on:false,busy:false}, syncTimer=null;
+
+/* ---------- UTIL ---------- */
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const fmtN=n=>(Number(n)||0).toLocaleString('id-ID');
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const dIndo=iso=>{if(!iso)return '-';const d=new Date(iso+'T00:00:00');return d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})};
+function toast(msg){const t=$('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',2200)}
+function openModal(title,html){$('mTitle').textContent=title;$('mBody').innerHTML=html;$('modal').style.display='flex'}
+function closeModal(){$('modal').style.display='none'}
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+function openConfirm(msg,fn){openModal('Konfirmasi',`<p style="margin-bottom:16px">${esc(msg)}</p><div class="row"><button class="btn danger" onclick="closeModal()">Batal</button><button class="btn green" id="cfOk">Ya, Lanjutkan</button></div>`);$('cfOk').onclick=()=>{closeModal();fn()}}
+
+/* ---------- KATALOG MATERIAL DEFAULT (lengkap) ---------- */
+const DEFAULT_MATERIALS=[
+ // Beton & Semen
+ ["Beton & Semen","Semen Portland 40kg (zak)","zak"],["Beton & Semen","Semen Putih 40kg (zak)","zak"],
+ ["Beton & Semen","Semen Mortar (zak)","zak"],["Beton & Semen","Beton Ready Mix K-225","m³"],
+ ["Beton & Semen","Beton Ready Mix K-250","m³"],["Beton & Semen","Beton Ready Mix K-300","m³"],
+ ["Beton & Semen","Aditif Beton (liter)","liter"],
+ // Agregat & Urugan
+ ["Agregat","Pasir Beton (concrete sand)","m³"],["Agregat","Pasir Urug","m³"],["Agregat","Pasir Pasang","m³"],
+ ["Agregat","Batu Split 1-2","m³"],["Agregat","Batu Split 2-3","m³"],["Agregat","Batu Belah","m³"],
+ ["Agregat","Batu Kali / Bulat","m³"],["Agregat","Sirtu (pasir batu)","m³"],["Agregat","Abu Batu","m³"],
+ ["Agregat","Tanah Urug Pilihan","m³"],["Agregat","Batu Makadam","m³"],
+ // Bata & Dinding
+ ["Bata & Dinding","Batako 40x20x10","pcs"],["Bata & Dinding","Bata Merah","pcs"],
+ ["Beton & Semen","Bata Ringan Hebel 10cm","m³"],["Bata & Dinding","Bata Ringan Hebel 7,5cm","m³"],
+ ["Bata & Dinding","Bata Api / SK","pcs"],
+ // Besi & Baja
+ ["Besi & Baja","Besi Beton Polos 6mm","batang"],["Besi & Baja","Besi Beton Polos 8mm","batang"],
+ ["Besi & Baja","Besi Beton Ulir 10mm","batang"],["Besi & Baja","Besi Beton Ulir 12mm","batang"],
+ ["Besi & Baja","Besi Beton Ulir 16mm","batang"],["Besi & Baja","Besi Beton Ulir 19mm","batang"],
+ ["Besi & Baja","Kawat Bendrat","kg"],["Besi & Baja","Kawat Las","kg"],
+ ["Besi & Baja","Wiremesh M8 (lembar)","lembar"],["Besi & Baja","Wiremesh M10 (lembar)","lembar"],
+ ["Besi & Baja","Hollow Galvanis 4x4","batang"],["Besi & Baja","Hollow Galvanis 4x6","batang"],
+ ["Besi & Baja","Kanal C 75","batang"],["Besi & Baja","Bondek 0,75mm (lembar)","lembar"],
+ ["Besi & Baja","Besi Siku","batang"],["Besi & Baja","Plat Strip","batang"],
+ // Kayu & Triplek
+ ["Kayu & Triplek","Kaso 5x7 (batang)","batang"],["Kayu & Triplek","Balok 8/12 (batang)","batang"],
+ ["Kayu & Triplek","Papan 3/20 (lembar)","lembar"],["Kayu & Triplek","Triplek 9mm (lembar)","lembar"],
+ ["Kayu & Triplek","Triplek 12mm (lembar)","lembar"],["Kayu & Triplek","Multiplek 18mm (lembar)","lembar"],
+ ["Kayu & Triplek","Dolken 6-8cm (batang)","batang"],["Kayu & Triplek","Plywood Bekisting (lembar)","lembar"],
+ // Atap & Penutup
+ ["Atap","Genteng Beton (pcs)","pcs"],["Atap","Genteng Metal Pasir (lembar)","lembar"],
+ ["Atap","Nok Genteng","pcs"],["Atap","Talang Galvalum (batang)","batang"],
+ ["Atap","Lisplang PVC","batang"],["Atap","Plafon Gypsum (lembar)","lembar"],
+ ["Atap","Plafon PVC 20cm (batang)","batang"],["Atap","Rangka Atap Baja Ringan (m²)","m²"],
+ ["Atap","Seng Gelombang (lembar)","lembar"],["Atap","Aluminium Foil / Bubble (m²)","m²"],
+ // Lantai & Dinding Finishing
+ ["Finishing Lantai","Keramik 40x40 (dus)","dus"],["Finishing Lantai","Keramik 60x60 (dus)","dus"],
+ ["Finishing Lantai","Granit 60x60 (dus)","dus"],["Finishing Lantai","Ubin Teraso (dus)","dus"],
+ ["Finishing Lantai","Nat Keramik (sak)","sak"],["Finishing Lantai","Semen Lantai / Floor Hardener (kg)","kg"],
+ // Sanitair & Plumbing
+ ["Plumbing","Pipa PVC AW 3/4\"","batang"],["Plumbing","Pipa PVC AW 1\"","batang"],
+ ["Plumbing","Pipa PVC AW 2\"","batang"],["Plumbing","Pipa PVC AW 3\"","batang"],
+ ["Plumbing","Pipa PVC AW 4\"","batang"],["Plumbing","Pipa PPR 1/2\"","batang"],
+ ["Plumbing","Fitting PVC (pcs)","pcs"],["Plumbing","Kran Air (pcs)","pcs"],
+ ["Plumbing","Kloset Duduk (set)","set"],["Plumbing","Kloset Jongkok (set)","set"],
+ ["Plumbing","Wastafel (set)","set"],["Plumbing","Shower Set (set)","set"],
+ ["Plumbing","Floor Drain (pcs)","pcs"],["Plumbing","Tandon Air (pcs)","pcs"],
+ ["Plumbing","Mesin Air / Pompa (unit)","unit"],
+ // Listrik
+ ["Listrik","Kabel NYM 2x1,5 (meter)","meter"],["Listrik","Kabel NYM 3x2,5 (meter)","meter"],
+ ["Listrik","Kabel NYM 3x4 (meter)","meter"],["Listrik","Kabel NYY 4x6 (meter)","meter"],
+ ["Listrik","Pipa Conduit 20mm","batang"],["Listrik","Fitting Lampu (pcs)","pcs"],
+ ["Listrik","Stop Kontak (pcs)","pcs"],["Listrik","Saklar (pcs)","pcs"],
+ ["Listrik","MCB 6A/10A/16A (pcs)","pcs"],["Listrik","Panel Listrik (unit)","unit"],
+ ["Listrik","Lampu LED (pcs)","pcs"],
+ // Cat & Finishing
+ ["Cat & Finishing","Cat Tembok Interior (pail)","pail"],["Cat & Finishing","Cat Tembok Eksterior (pail)","pail"],
+ ["Cat & Finishing","Cat Plafon (pail)","pail"],["Cat & Finishing","Cat Minyak (liter)","liter"],
+ ["Cat & Finishing","Cat Duco (liter)","liter"],["Cat & Finishing","Thinner (liter)","liter"],
+ ["Cat & Finishing","Kuas 2-4\" (pcs)","pcs"],["Cat & Finishing","Roller Set (set)","set"],
+ ["Cat & Finishing","Amplas #120/#240 (lembar)","lembar"],["Cat & Finishing","Dempul Tembok (kg)","kg"],
+ ["Cat & Finishing","Plamir (kg)","kg"],
+ // Alat, Bahan & Lain-lain
+ ["Lain-lain","Paku 5cm/7cm/10cm (kg)","kg"],["Lain-lain","Baut & Mur (kg)","kg"],
+ ["Lain-lain","Sekrup Gypsum (dus)","dus"],["Lain-lain","Lem PVC Fox (tube)","tube"],
+ ["Lain-lain","Lem Kayu (liter)","liter"],["Lain-lain","Sealant Silikon (tube)","tube"],
+ ["Lain-lain","Bambu (batang)","batang"],["Lain-lain","Terpal (lembar)","lembar"],
+ ["Lain-lain","Kawat Seng (kg)","kg"],["Lain-lain","Benang Nylon (roll)","roll"],
+ ["Lain-lain","Solar (liter)","liter"],["Lain-lain","Oli Mesin (liter)","liter"],
+ ["Lain-lain","Gas LPG 3kg (tabung)","tabung"],["Lain-lain","Air Bersih (tangki)","tangki"],
+ ["Lain-lain","Lap / Kain Majun (kg)","kg"],["Lain-lain","Curing Compound (liter)","liter"],
+ ["Lain-lain","Kawat Duri (roll)","roll"],["Lain-lain","Paving Block (m²)","m²"],
+ ["Lain-lain","Buis Beton D20 (batang)","batang"],["Lain-lain","Gorong-gorong / U-ditch","batang"]
+];
+
+/* ---------- SEED DATA ---------- */
+function newProjectData(name){
+  return {
+    materials: DEFAULT_MATERIALS.map((m,i)=>({id:'m'+i+'_'+uid(),cat:m[0],name:m[1],unit:m[2]})),
+    stock:{},          // matId -> {qty, unit}
+    usage:[],          // {id,matId,qty,date,note,by}
+    opname:[],         // {id,matId,qty,unit,note,by,date,status:pending|verified}
+    workers:[],        // {id,name,role}
+    attendance:[],     // {id,date,list:[{wid,name,status,note}],by}
+    progress:[],       // {id,date,job,target,actual,unit,pct,note,by}
+    targets:[],        // {id,job,qty,unit,deadline,done,doneQty,note}
+    obstacles:[],      // {id,date,desc,status,solution,by}
+    expenses:[],       // {id,date,desc,amount,by}
+    notes:[]
+  };
+}
+function seed(){
+  const pid=uid();
+  return {
+    users:[
+      {u:'owner',p:'owner123',role:'owner',wa:''},
+      {u:'admin',p:'0000',role:'admin',wa:''},
+      {u:'mandor1',p:'1111',role:'mandor',wa:''}
+    ],
+    projects:[{id:pid,name:'Proyek Contoh — Rumah Tinggal Blok A',desc:'Contoh proyek. Edit nama & keterangan di Pengaturan.',location:'',wa:''}],
+    activeProject:pid,
+    data:{[pid]:newProjectData('Proyek Contoh')},
+    settings:{fbConfig:'',waOwner:'',autoWa:false,lastReport:''},
+    meta:{created:todayISO()}
+  };
+}
+function load(){ try{S=JSON.parse(localStorage.getItem(DBKEY))||seed()}catch(e){S=seed()} if(!S.data)S=seed(); }
+function P(){ if(!S.data[S.activeProject])S.data[S.activeProject]=newProjectData(''); return S.data[S.activeProject]; }
+function save(){ localStorage.setItem(DBKEY,JSON.stringify(S)); queueSync(); }
+function curUser(){ try{return JSON.parse(sessionStorage.getItem(SESKEY))}catch(e){return null} }
+function isStaff(){const c=curUser();return c&&(c.role==='owner'||c.role==='admin')}
+function canEditAll(){return isStaff()}
+
+/* ---------- FIREBASE SYNC ---------- */
+function queueSync(){ clearTimeout(syncTimer); syncTimer=setTimeout(fbPush,900); }
+function fbPush(){
+  if(!FB.on||!FB.db||FB.busy)return;
+  FB.busy=true;
+  FB.db.ref('abpos/state').set(JSON.parse(JSON.stringify(S))).then(()=>{FB.busy=false;setSync('on')}).catch(e=>{FB.busy=false;setSync('err')});
+}
+function setSync(st){
+  const d=$('syncDot');
+  if(st==='on'){d.innerHTML='● tersinkron';d.style.color='var(--green)'}
+  else if(st==='err'){d.innerHTML='● galat sync';d.style.color='var(--red)'}
+  else if(st==='conn'){d.innerHTML='● terhubung';d.style.color='var(--blue)'}
+  else{d.innerHTML='● lokal';d.style.color='var(--muted)'}
+}
+async function fbInit(){
+  const cfg=S.settings.fbConfig;
+  if(!cfg){FB.on=false;setSync('off');return}
+  try{
+    if(!window.firebase){
+      await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+      await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js');
+    }
+    let conf; try{conf=JSON.parse(cfg)}catch(e){conf=null}
+    if(!conf||!conf.apiKey){setSync('err');return}
+    if(!FB.app){FB.app=firebase.initializeApp(conf)}
+    FB.db=firebase.database(FB.app); FB.on=true; setSync('conn');
+    FB.db.ref('abpos/state').on('value',snap=>{
+      const v=snap.val();
+      if(v&&v.meta&&(!FB.lastLocal||v.meta.updated>FB.lastLocal)){
+        S=v; localStorage.setItem(DBKEY,JSON.stringify(S)); renderAll(); setSync('on');
+      }
+    });
+    fbPush();
+  }catch(e){console.warn('FB init gagal',e);setSync('err')}
+}
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+</script>
+<script>
+/* ---------- AUTH ---------- */
+function doLogin(){
+  const u=$('lgUser').value.trim(), p=$('lgPass').value;
+  const found=S.users.find(x=>x.u===u&&x.p===p);
+  if(!found){$('lgErr').textContent='Username atau password salah.';return}
+  sessionStorage.setItem(SESKEY,JSON.stringify({u:found.u,role:found.role}));
+  $('lgErr').textContent='';
+  enterApp();
+}
+function doLogout(){sessionStorage.removeItem(SESKEY);location.hash='';$('app').style.display='none';$('login').style.display='flex';$('lgPass').value=''}
+function enterApp(){
+  $('login').style.display='none';$('app').style.display='block';
+  buildNav(); renderAll(); maybeAutoWa();
+}
+$('lgPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+/* ---------- NAV ---------- */
+const NAV=[
+  ['#dashboard','🏠','Dashboard'],
+  ['#absensi','👷','Absensi'],
+  ['#material','🧱','Material'],
+  ['#progress','📈','Progres'],
+  ['#kendala','⚠️','Kendala'],
+  ['#laporan','📋','Laporan'],
+  ['#pengaturan','⚙️','Pengaturan']
+];
+function buildNav(){
+  const c=curUser(), hideStaff=!isStaff();
+  const items=NAV.filter(n=>!(hideStaff&&n[0]==='#pengaturan'));
+  $('side').innerHTML=items.map(n=>`<a href="${n[0]}" data-r="${n[0]}"><span>${n[1]}</span>${n[2]}</a>`).join('');
+  $('bnav').innerHTML=items.map(n=>`<a href="${n[0]}" data-r="${n[0]}"><span>${n[1]}</span>${n[2]}</a>`).join('');
+  $('tbUser').textContent=`${c.u} · ${c.role.toUpperCase()}`;
+}
+function renderNav(){
+  const r=location.hash||'#dashboard';
+  document.querySelectorAll('#side a,#bnav a').forEach(a=>a.classList.toggle('on',a.dataset.r===r));
+}
+function renderAll(){ buildNav(); renderNav(); renderMain(); fillProjectSel(); }
+function fillProjectSel(){
+  $('projSel').innerHTML=S.projects.map(p=>`<option value="${p.id}" ${p.id===S.activeProject?'selected':''}>${esc(p.name)}</option>`).join('');
+}
+function switchProject(id){S.activeProject=id;save();renderAll();toast('Proyek diganti: '+S.projects.find(p=>p.id===id).name)}
+window.addEventListener('hashchange',()=>{renderNav();renderMain()});
+
+/* ---------- ROUTER ---------- */
+function renderMain(){
+  const r=(location.hash||'#dashboard').split('?')[0];
+  const c=curUser();
+  if(c&&c.role==='mandor'&&r==='#pengaturan'){location.hash='#dashboard';return}
+  const M={'#dashboard':vDashboard,'#absensi':vAbsensi,'#material':vMaterial,'#progress':vProgress,'#kendala':vKendala,'#laporan':vLaporan,'#pengaturan':vPengaturan};
+  (M[r]||vDashboard)();
+  window.scrollTo(0,0);
+}
+function page(title,ico,body,extra=''){return `<h2><span class="ico">${ico}</span>${title} ${extra}</h2>${body}`}
+
+/* ---------- DASHBOARD ---------- */
+function vDashboard(){
+  const p=P(), t=todayISO();
+  const todayAtt=p.attendance.filter(a=>a.date===t).length;
+  const workers=p.workers.length;
+  const pendingOp=p.opname.filter(o=>o.status==='pending').length;
+  const pct=p.targets.length?Math.round(p.targets.filter(x=>x.done).length/p.targets.length*100):0;
+  const todayUse=p.usage.filter(u=>u.date===t);
+  const openObs=p.obstacles.filter(o=>o.status!=='Selesai').length;
+  let usageSum=''; if(todayUse.length){const m={};todayUse.forEach(u=>{m[u.matId]=(m[u.matId]||0)+Number(u.qty)});usageSum=Object.entries(m).slice(0,6).map(([id,q])=>{const mt=p.materials.find(x=>x.id===id);return `<div class="list-item"><div class="g"><b>${esc(mt?mt.name:'?')}</b><br><span class="muted">-${fmtN(q)} ${mt?mt.unit:''}</span></div></div>`}).join('')}
+  $('main').innerHTML=page('Dashboard','🏠',`
+    <div class="stat">
+      <div class="s"><b>${workers}</b><span>Tenaga Kerja Terdaftar</span></div>
+      <div class="s"><b>${todayAtt}</b><span>Absensi Hari Ini</span></div>
+      <div class="s"><b>${p.usage.length}</b><span>Total Pemakaian Material</span></div>
+      <div class="s"><b>${pendingOp}</b><span>Opname Menunggu Verifikasi</span></div>
+      <div class="s"><b>${openObs}</b><span>Kendala Aktif</span></div>
+      <div class="s"><b>${pct}%</b><span>Target Selesai</span></div>
+    </div>
+    <div class="card"><div class="hdr-line"><b>📌 Proyek Aktif</b><span class="pill">${dIndo(t)}</span></div>
+      <b style="color:var(--gold2)">${esc(S.projects.find(x=>x.id===S.activeProject).name)}</b>
+      <p class="muted" style="margin-top:4px">${esc(S.projects.find(x=>x.id===S.activeProject).desc||'')}</p>
+      ${p.targets.length?`<div class="progressbar"><i style="width:${pct}%"></i></div><span class="muted" style="font-size:12px">${pct}% target pekerjaan selesai</span>`:''}
+    </div>
+    <div class="grid2">
+      <div class="card"><div class="hdr-line"><b>🧱 Pemakaian Hari Ini</b><a href="#material" class="pill">lihat semua</a></div>
+        ${usageSum||'<p class="muted">Belum ada pemakaian material hari ini.</p>'}</div>
+      <div class="card"><div class="hdr-line"><b>⚠️ Kendala Terbaru</b><a href="#kendala" class="pill">lihat semua</a></div>
+        ${p.obstacles.slice(-5).reverse().map(o=>`<div class="list-item"><div class="g"><b>${esc(o.desc.slice(0,60))}${o.desc.length>60?'…':''}</b><br><span class="muted">${dIndo(o.date)} · ${esc(o.by)}</span></div><span class="badge ${o.status==='Selesai'?'b-green':'b-orange'}">${esc(o.status)}</span></div>`).join('')||'<p class="muted">Tidak ada kendala. Luar biasa! 🎉</p>'}</div>
+    </div>`);
+}
+
+/* ---------- ABSENSI ---------- */
+function vAbsensi(sub){
+  const p=P(), t=todayISO();
+  let att=p.attendance.filter(a=>a.date===t)[0];
+  if(!att){att={id:uid(),date:t,list:[],by:curUser().u};p.attendance.push(att);save()}
+  const dateAtt=p.attendance.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  $('main').innerHTML=page('Absensi Tenaga Kerja','👷',`
+    <div class="card">
+      <div class="hdr-line"><b>Kehadiran — ${dIndo(t)}</b>
+        <button class="btn small" onclick="attAddRow()">+ Tambah Pekerja</button></div>
+      <div id="attRows">${att.list.map((w,i)=>attRow(w,i)).join('')||'<p class="muted">Belum ada pekerja. Klik "+ Tambah Pekerja".</p>'}</div>
+      <div style="height:12px"></div>
+      <button class="btn green" style="width:100%" onclick="attSave()">💾 Simpan Absensi Hari Ini</button>
+    </div>
+    <div class="card"><div class="hdr-line"><b>🗂️ Riwayat Absensi</b>
+      <button class="btn ghost small" onclick="exportCSV('attendance')">⬇️ CSV</button></div>
+      ${dateAtt.map(a=>`<div class="list-item"><div class="g"><b>${dIndo(a.date)}</b> <span class="muted">oleh ${esc(a.by)}</span><br>
+        ${a.list.map(w=>`<span class="badge ${w.status==='Hadir'?'b-green':w.status==='Izin'?'b-blue':w.status==='Sakit'?'b-orange':'b-red'}" style="margin:2px 3px 2px 0">${esc(w.name)}·${w.status}</span>`).join('')||'<span class="muted">kosong</span>'}
+      </div><div class="a">
+        <button class="btn ghost small" onclick="attEdit('${a.id}')">✏️</button>
+        <button class="btn danger small" onclick="attDel('${a.id}')">🗑️</button>
+      </div></div>`).join('')||'<p class="muted">Belum ada riwayat.</p>'}
+    </div>`);
+}
+function attRow(w,i){
+  const st=w.status||'Hadir';
+  return `<div class="row" style="align-items:end;margin-bottom:8px" id="attR${i}">
+    <div style="flex:3"><input value="${esc(w.name)}" placeholder="Nama pekerja" onchange="attUpd(${i},'name',this.value)"></div>
+    <div style="flex:2"><select onchange="attUpd(${i},'status',this.value)">
+      ${['Hadir','Sakit','Izin','Alpha'].map(s=>`<option ${s===st?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div style="flex:2"><input value="${esc(w.note||'')}" placeholder="Catatan" onchange="attUpd(${i},'note',this.value)"></div>
+    <div style="flex:0"><button class="btn danger small" onclick="attRowDel(${i})">✕</button></div>
+  </div>`;
+}
+function attData(){const t=todayISO();return P().attendance.filter(a=>a.date===t)[0]}
+function attAddRow(){const a=attData();a.list.push({name:'',status:'Hadir',note:''});save();vAbsensi()}
+function attRowDel(i){const a=attData();a.list.splice(i,1);save();vAbsensi()}
+function attUpd(i,k,v){const a=attData();a.list[i][k]=v;save()}
+function attSave(){const a=attData();a.by=curUser().u;a.list=a.list.filter(w=>w.name.trim());save();toast('Absensi tersimpan ✓');vAbsensi()}
+function attEdit(id){
+  const p=P(),a=p.attendance.find(x=>x.id===id);if(!a)return;
+  openModal('Edit Absensi '+dIndo(a.date),`
+    <div id="aeRows">${a.list.map((w,i)=>attRow(w,i)).join('')}</div>
+    <div style="height:10px"></div><div class="row">
+    <button class="btn ghost" onclick="closeModal()">Batal</button>
+    <button class="btn green" onclick="attEditSave('${id}')">💾 Simpan</button></div>`);
+  window._aeId=id;
+}
+function attEditSave(id){
+  const p=P(),a=p.attendance.find(x=>x.id===id);if(!a)return;
+  // rows rendered with attUpd writes to today's attendance — handle separately:
+  const rows=[...document.querySelectorAll('#aeRows > .row')];
+  a.list=rows.map(r=>{const inp=r.querySelectorAll('input,select');return{name:inp[0].value.trim(),status:inp[1].value,note:inp[2].value}}).filter(w=>w.name);
+  a.by=curUser().u;save();closeModal();toast('Absensi diperbarui ✓');vAbsensi();
+}
+function attDel(id){openConfirm('Hapus data absensi ini?',()=>{const p=P();p.attendance=p.attendance.filter(a=>a.id!==id);save();toast('Dihapus');vAbsensi()})}
+</script>
+<script>
+/* ---------- MATERIAL (Stok | Pemakaian | Opname | Katalog) ---------- */
+let matTab='stok';
+function vMaterial(){
+  const staff=isStaff();
+  const tabs=[['stok','📦 Stok'],['pakai','🧱 Pemakaian'],['opname','🧮 Opname'],['katalog','📚 Katalog']];
+  $('main').innerHTML=page('Material','🧱',`
+    <div class="tabs">${tabs.map(t=>`<button class="${matTab===t[0]?'on':''}" onclick="matTab='${t[0]}';vMaterial()">${t[1]}</button>`).join('')}</div>
+    <div id="matBody"></div>`);
+  ({stok:mStok,pakai:mPakai,opname:mOpname,katalog:mKatalog})[matTab](staff);
+}
+function matOptions(sel){const p=P();return p.materials.map(m=>`<option value="${m.id}" ${m.id===sel?'selected':''}>${esc(m.name)} (${m.unit})</option>`).join('')}
+function getMat(id){return P().materials.find(m=>m.id===id)}
+function stockQty(id){const p=P();return p.stock[id]?Number(p.stock[id].qty):0}
+
+function mStok(staff){
+  const p=P(), st=staff;
+  const rows=p.materials.filter(m=>stockQty(m.id)!==0||st).map(m=>{
+    const s=p.stock[m.id]||{qty:0,unit:m.unit};
+    return `<div class="list-item"><div class="g"><b>${esc(m.name)}</b><br><span class="muted">${esc(m.cat)} · ${fmtN(s.qty)} ${esc(s.unit||m.unit)}</span></div>
+    <div class="a">
+      ${st?`<button class="btn ghost small" onclick="stockEdit('${m.id}')">✏️ Edit</button>`:''}
+    </div></div>`;
+  }).join('');
+  $('matBody').innerHTML=`
+    <div class="card"><div class="hdr-line"><b>Stok Material Saat Ini</b>
+      <div><input placeholder="🔍 Cari material…" style="max-width:200px;display:inline-block" oninput="matFilter(this.value)">
+      <button class="btn small" onclick="exportCSV('stock')">⬇️ CSV</button></div></div>
+    <div id="stockList">${rows||'<p class="muted">Belum ada stok tercatat.</p>'}</div></div>`;
+}
+function matFilter(q){
+  const p=P(),qq=q.toLowerCase();
+  const rows=p.materials.filter(m=>(m.name+m.cat).toLowerCase().includes(qq)&&stockQty(m.id)!==0|| (isStaff()&&(m.name+m.cat).toLowerCase().includes(qq))).map(m=>{
+    const s=p.stock[m.id]||{qty:0,unit:m.unit};
+    return `<div class="list-item"><div class="g"><b>${esc(m.name)}</b><br><span class="muted">${esc(m.cat)} · ${fmtN(s.qty)} ${esc(s.unit||m.unit)}</span></div>
+    <div class="a">${isStaff()?`<button class="btn ghost small" onclick="stockEdit('${m.id}')">✏️ Edit</button>`:''}</div></div>`;
+  }).join('');
+  $('stockList').innerHTML=rows||'<p class="muted">Tidak ditemukan.</p>';
+}
+function stockEdit(id){
+  const p=P(),m=getMat(id),s=p.stock[id]||{qty:0,unit:m.unit};
+  openModal('Edit Stok — '+m.name,`
+    <label>Volume / Jumlah Stok</label><input id="seQty" type="number" step="any" value="${s.qty}">
+    <label>Satuan</label><input id="seUnit" value="${esc(s.unit||m.unit)}" list="units">
+    <datalist id="units">${['m³','kg','zak','batang','lembar','pcs','dus','pail','sak','liter','meter','set','unit','roll','tabung','tangki','batang'].map(u=>`<option>${u}</option>`).join('')}</datalist>
+    <div style="height:12px"></div><div class="row">
+    <button class="btn ghost" onclick="closeModal()">Batal</button>
+    <button class="btn green" onclick="stockSave('${id}')">💾 Simpan</button></div>`);
+}
+function stockSave(id){const p=P();p.stock[id]={qty:Number($('seQty').value)||0,unit:$('seUnit').value||getMat(id).unit};save();closeModal();toast('Stok diperbarui ✓');vMaterial()}
+
+function mPakai(staff){
+  const p=P();
+  const list=p.usage.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,80);
+  $('matBody').innerHTML=`
+    <div class="card"><div class="hdr-line"><b>Input Pemakaian Material</b><span class="pill">stok otomatis berkurang</span></div>
+      <label>Material</label><select id="usMat">${matOptions()}</select>
+      <div class="grid2"><div><label>Jumlah</label><input id="usQty" type="number" step="any" placeholder="0"></div>
+      <div><label>Tanggal</label><input id="usDate" type="date" value="${todayISO()}"></div></div>
+      <label>Catatan (lokasi/pekerjaan)</label><input id="usNote" placeholder="cth: plester dinding lantai 2">
+      <div style="height:12px"></div><button class="btn" style="width:100%" onclick="usAdd()">➕ Catat Pemakaian</button>
+    </div>
+    <div class="card"><div class="hdr-line"><b>Riwayat Pemakaian</b><button class="btn ghost small" onclick="exportCSV('usage')">⬇️ CSV</button></div>
+      ${list.map(u=>{const m=getMat(u.matId);return `<div class="list-item"><div class="g"><b>${esc(m?m.name:'(dihapus)')}</b><br>
+        <span class="muted">${dIndo(u.date)} · -${fmtN(u.qty)} ${m?m.unit:''} · ${esc(u.by)}${u.note?' · '+esc(u.note):''}</span></div>
+        <div class="a">${staff?`<button class="btn ghost small" onclick="usEdit('${u.id}')">✏️</button><button class="btn danger small" onclick="usDel('${u.id}')">🗑️</button>`:''}</div></div>`}).join('')||'<p class="muted">Belum ada pemakaian.</p>'}
+    </div>`;
+}
+function usAdd(){
+  const id=$('usMat').value,qty=Number($('usQty').value);
+  if(!id||!qty){toast('Lengkapi material & jumlah');return}
+  const p=P(),c=curUser();
+  p.usage.push({id:uid(),matId:id,qty,date:$('usDate').value||todayISO(),note:$('usNote').value.trim(),by:c.u});
+  const st=p.stock[id]||{qty:0,unit:getMat(id).unit};st.qty=Number(st.qty)-qty;p.stock[id]=st;
+  save();toast('Pemakaian dicatat ✓');vMaterial();
+}
+function usEdit(id){
+  const p=P(),u=p.usage.find(x=>x.id===id);if(!u)return;
+  openModal('Edit Pemakaian',`
+    <label>Material</label><select id="ueMat">${matOptions(u.matId)}</select>
+    <div class="grid2"><div><label>Jumlah</label><input id="ueQty" type="number" step="any" value="${u.qty}"></div>
+    <div><label>Tanggal</label><input id="ueDate" type="date" value="${u.date}"></div></div>
+    <label>Catatan</label><input id="ueNote" value="${esc(u.note||'')}">
+    <div style="height:12px"></div><div class="row"><button class="btn ghost" onclick="closeModal()">Batal</button>
+    <button class="btn green" onclick="usEditSave('${id}')">💾 Simpan</button></div>`);
+}
+function usEditSave(id){
+  const p=P(),u=p.usage.find(x=>x.id===id);if(!u)return;
+  const newQty=Number($('ueQty').value)||u.qty;
+  // kembalikan stok lama lalu kurangi baru
+  let st=p.stock[u.matId]||{qty:0,unit:getMat(u.matId).unit};st.qty=Number(st.qty)+Number(u.qty);p.stock[u.matId]=st;
+  u.matId=$('ueMat').value;u.qty=newQty;u.date=$('ueDate').value;u.note=$('ueNote').value.trim();
+  st=p.stock[u.matId]||{qty:0,unit:getMat(u.matId).unit};st.qty=Number(st.qty)-newQty;p.stock[u.matId]=st;
+  save();closeModal();toast('Diperbarui ✓');vMaterial();
+}
+function usDel(id){
+  openConfirm('Hapus pemakaian ini? (stok akan dikembalikan)',()=>{
+    const p=P(),u=p.usage.find(x=>x.id===id);if(u){const st=p.stock[u.matId]||{qty:0,unit:getMat(u.matId).unit};st.qty=Number(st.qty)+Number(u.qty);p.stock[u.matId]=st}
+    p.usage=p.usage.filter(x=>x.id!==id);save();toast('Dihapus');vMaterial();
+  });
+}
+
+function mOpname(staff){
+  const p=P();
+  $('matBody').innerHTML=`
+    <div class="card"><div class="hdr-line"><b>Input Stok Opname</b>${staff?'<span class="pill">langsung terverifikasi</span>':'<span class="pill">menunggu verifikasi admin/owner</span>'}</div>
+      <label>Material</label><select id="opMat">${matOptions()}</select>
+      <div class="grid2"><div><label>Qty Fisik (hasil opname)</label><input id="opQty" type="number" step="any" placeholder="0"></div>
+      <div><label>Satuan</label><input id="opUnit" placeholder="cth: zak, m³"></div></div>
+      <label>Catatan</label><input id="opNote" placeholder="cth: stok fisik gudang">
+      <div style="height:12px"></div><button class="btn" style="width:100%" onclick="opAdd()">➕ Kirim Opname</button>
+    </div>
+    <div class="card"><div class="hdr-line"><b>Riwayat Opname</b>
+      ${staff?`<button class="btn small green" onclick="opVerifyAll()">✔ Verifikasi Semua Pending</button>`:''}</div>
+      ${p.opname.slice().reverse().map(o=>{const m=getMat(o.matId);return `<div class="list-item"><div class="g"><b>${esc(m?m.name:'(dihapus)')}</b><br>
+        <span class="muted">${dIndo(o.date)} · ${fmtN(o.qty)} ${esc(o.unit||'')} · oleh ${esc(o.by)}${o.note?' · '+esc(o.note):''}</span></div>
+        <div class="a"><span class="badge ${o.status==='verified'?'b-green':'b-orange'}">${o.status==='verified'?'✔ terverifikasi':'⏳ pending'}</span>
+        ${staff&&o.status==='pending'?`<button class="btn green small" onclick="opVerify('${o.id}')">✔</button><button class="btn danger small" onclick="opReject('${o.id}')">✕</button>`:''}
+        ${staff?`<button class="btn danger small" onclick="opDel('${o.id}')">🗑️</button>`:''}</div></div>`}).join('')||'<p class="muted">Belum ada opname.</p>'}
+    </div>`;
+}
+function opAdd(){
+  const id=$('opMat').value,qty=Number($('opQty').value);
+  if(!id||qty===''||isNaN(qty)){toast('Lengkapi data opname');return}
+  const p=P(),staff=isStaff();
+  p.opname.push({id:uid(),matId:id,qty,unit:$('opUnit').value.trim()||getMat(id).unit,note:$('opNote').value.trim(),by:curUser().u,date:todayISO(),status:staff?'verified':'pending'});
+  if(staff){p.stock[id]={qty,unit:$('opUnit').value.trim()||getMat(id).unit}}
+  save();toast(staff?'Stok opname langsung tersimpan ✓':'Opname terkirim, menunggu verifikasi ✓');vMaterial();
+}
+function opVerify(id){const p=P(),o=p.opname.find(x=>x.id===id);if(!o)return;o.status='verified';p.stock[o.matId]={qty:Number(o.qty),unit:o.unit||getMat(o.matId).unit};save();toast('Opname diverifikasi, stok diperbarui ✓');vMaterial()}
+function opVerifyAll(){const p=P();let n=0;p.opname.forEach(o=>{if(o.status==='pending'){o.status='verified';p.stock[o.matId]={qty:Number(o.qty),unit:o.unit||getMat(o.matId).unit};n++}});save();toast(n+' opname diverifikasi ✓');vMaterial()}
+function opReject(id){openConfirm('Tolak opname ini?',()=>{const p=P();p.opname=p.opname.filter(x=>x.id!==id);save();vMaterial()})}
+function opDel(id){openConfirm('Hapus riwayat opname ini?',()=>{const p=P();p.opname=p.opname.filter(x=>x.id!==id);save();vMaterial()})}
+
+function mKatalog(staff){
+  const p=P();
+  const cats=[...new Set(p.materials.map(m=>m.cat))];
+  $('matBody').innerHTML=`
+    ${staff?`<div class="card"><div class="hdr-line"><b>Tambah Item Katalog</b><span class="pill">editor katalog — admin/owner</span></div>
+      <div class="grid2"><div><label>Kategori</label><input id="kkCat" list="catList" placeholder="cth: Besi & Baja"><datalist id="catList">${cats.map(c=>`<option>${esc(c)}</option>`).join('')}</datalist></div>
+      <div><label>Satuan Default</label><input id="kkUnit" placeholder="cth: zak, m³, batang"></div></div>
+      <label>Nama Material</label><input id="kkName" placeholder="cth: Besi Beton Ulir 13mm">
+      <div style="height:12px"></div><button class="btn" style="width:100%" onclick="kkAdd()">➕ Tambah ke Katalog</button></div>`:''}
+    <div class="card"><div class="hdr-line"><b>Katalog Material (${p.materials.length} item)</b>
+      <input placeholder="🔍 Cari…" style="max-width:200px;display:inline-block" oninput="kkFilter(this.value)"></div>
+      <div id="kkList">${kkRows('')}</div></div>`;
+}
+function kkRows(q){
+  const p=P(),qq=q.toLowerCase();
+  return p.materials.filter(m=>(m.name+m.cat).toLowerCase().includes(qq)).map(m=>`
+    <div class="list-item"><div class="g"><b>${esc(m.name)}</b><br><span class="muted">${esc(m.cat)} · satuan: ${esc(m.unit)} · stok: ${fmtN(stockQty(m.id))}</span></div>
+    <div class="a">${isStaff()?`<button class="btn ghost small" onclick="kkEdit('${m.id}')">✏️</button><button class="btn danger small" onclick="kkDel('${m.id}')">🗑️</button>`:''}</div></div>`).join('')||'<p class="muted">Tidak ditemukan.</p>';
+}
+function kkFilter(q){$('kkList').innerHTML=kkRows(q)}
+function kkAdd(){const p=P();const n=$('kkName').value.trim();if(!n){toast('Isi nama material');return}
+  p.materials.push({id:uid(),cat:$('kkCat').value.trim()||'Lain-lain',name:n,unit:$('kkUnit').value.trim()||'pcs'});save();toast('Item ditambahkan ✓');vMaterial()}
+function kkEdit(id){const m=getMat(id);if(!m)return;
+  openModal('Edit Item Katalog',`<label>Kategori</label><input id="keCat" value="${esc(m.cat)}">
+  <label>Nama Material</label><input id="keName" value="${esc(m.name)}">
+  <label>Satuan Default</label><input id="keUnit" value="${esc(m.unit)}">
+  <div style="height:12px"></div><div class="row"><button class="btn ghost" onclick="closeModal()">Batal</button>
+  <button class="btn green" onclick="kkEditSave('${id}')">💾 Simpan</button></div>`)}
+function kkEditSave(id){const m=getMat(id);if(!m)return;m.cat=$('keCat').value.trim();m.name=$('keName').value.trim();m.unit=$('keUnit').value.trim();save();closeModal();toast('Item diperbarui ✓');vMaterial()}
+function kkDel(id){openConfirm('Hapus item katalog ini? (riwayat pemakaian tetap tersimpan)',()=>{const p=P();p.materials=p.materials.filter(m=>m.id!==id);save();vMaterial()})}
+</script>
+<script>
+/* ---------- PROGRES & TARGET ---------- */
+let progTab='progres';
+function vProgress(){
+  $('main').innerHTML=page('Progres & Target Pekerjaan','📈',`
+    <div class="tabs">
+      <button class="${progTab==='progres'?'on':''}" onclick="progTab='progres';vProgress()">📅 Progres Harian</button>
+      <button class="${progTab==='target'?'on':''}" onclick="progTab='target';vProgress()">🎯 Target Pekerjaan</button>
+    </div><div id="progBody"></div>`);
+  progTab==='progres'?pgProgres():pgTarget();
+}
+function pgProgres(){
+  const p=P();
+  $('progBody').innerHTML=`
+    <div class="card"><div class="hdr-line"><b>Update Progres Pekerjaan</b><span class="pill">kondisi lapangan</span></div>
+      <label>Pekerjaan</label><input id="pgJob" placeholder="cth: Pembesian kolom lantai 2">
+      <div class="grid2"><div><label>Target Hari Ini (${'unit'})</label><input id="pgTarget" placeholder="cth: 50 m²"></div>
+      <div><label>Realisasi</label><input id="pgActual" placeholder="cth: 45 m²"></div></div>
+      <div class="grid2"><div><label>Progress (%)</label><input id="pgPct" type="number" min="0" max="100" placeholder="0–100"></div>
+      <div><label>Tanggal</label><input id="pgDate" type="date" value="${todayISO()}"></div></div>
+      <label>Catatan</label><input id="pgNote" placeholder="keterangan tambahan">
+      <div style="height:12px"></div><button class="btn" style="width:100%" onclick="pgAdd()">➕ Simpan Progres</button></div>
+    <div class="card"><b>Riwayat Progres</b>
+      ${p.progress.slice().reverse().map(g=>`<div class="list-item"><div class="g"><b>${esc(g.job)}</b><br>
+        <span class="muted">${dIndo(g.date)} · target: ${esc(g.target||'-')} · realisasi: ${esc(g.actual||'-')} · oleh ${esc(g.by)}${g.note?' · '+esc(g.note):''}</span>
+        <div class="progressbar"><i style="width:${Math.min(100,Number(g.pct)||0)}%"></i></div></div>
+        <div class="a" style="align-items:center"><b style="color:var(--gold2)">${esc(g.pct||0)}%</b>
+        ${canEditAll()?`<button class="btn ghost small" onclick="pgEdit('${g.id}')">✏️</button><button class="btn danger small" onclick="pgDel('${g.id}')">🗑️</button>`:''}</div></div>`).join('')||'<p class="muted">Belum ada progres tercatat.</p>'}
+    </div>`;
+}
+function pgAdd(){const job=$('pgJob').value.trim();if(!job){toast('Isi nama pekerjaan');return}
+  P().progress.push({id:uid(),job,target:$('pgTarget').value.trim(),actual:$('pgActual').value.trim(),pct:$('pgPct').value||0,note:$('pgNote').value.trim(),by:curUser().u,date:$('pgDate').value||todayISO()});
+  save();toast('Progres tersimpan ✓');vProgress()}
+function pgEdit(id){const g=P().progress.find(x=>x.id===id);if(!g)return;
+  openModal('Edit Progres',`<label>Pekerjaan</label><input id="geJob" value="${esc(g.job)}">
+  <div class="grid2"><div><label>Target</label><input id="geTarget" value="${esc(g.target||'')}"></div><div><label>Realisasi</label><input id="geActual" value="${esc(g.actual||'')}"></div></div>
+  <div class="grid2"><div><label>Progress %</label><input id="gePct" type="number" min="0" max="100" value="${g.pct||0}"></div><div><label>Tanggal</label><input id="geDate" type="date" value="${g.date}"></div></div>
+  <label>Catatan</label><input id="geNote" value="${esc(g.note||'')}">
+  <div style="height:12px"></div><div class="row"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn green" onclick="pgEditSave('${id}')">💾 Simpan</button></div>`)}
+function pgEditSave(id){const g=P().progress.find(x=>x.id===id);if(!g)return;g.job=$('geJob').value.trim();g.target=$('geTarget').value;g.actual=$('geActual').value;g.pct=$('gePct').value;g.date=$('geDate').value;g.note=$('geNote').value;save();closeModal();toast('Diperbarui ✓');vProgress()}
+function pgDel(id){openConfirm('Hapus catatan progres ini?',()=>{const p=P();p.progress=p.progress.filter(x=>x.id!==id);save();vProgress()})}
+
+function pgTarget(){
+  const p=P();
+  const done=p.targets.filter(t=>t.done).length,tot=p.targets.length;
+  $('progBody').innerHTML=`
+    <div class="card"><div class="hdr-line"><b>Target Harian / Pekerjaan</b><span class="pill">${done}/${tot} selesai</span></div>
+      <label>Pekerjaan</label><input id="tgJob" placeholder="cth: Cor dak lantai 2">
+      <div class="grid2"><div><label>Volume Target</label><input id="tgQty" type="number" step="any" placeholder="0"></div>
+      <div><label>Satuan</label><input id="tgUnit" placeholder="m² / m³ / m'"></div></div>
+      <div class="grid2"><div><label>Tenggat (tanggal)</label><input id="tgDeadline" type="date"></div>
+      <div><label>Catatan</label><input id="tgNote" placeholder="opsional"></div></div>
+      <div style="height:12px"></div><button class="btn" style="width:100%" onclick="tgAdd()">➕ Tambah Target</button></div>
+    <div class="card"><b>Daftar Target</b>
+      ${p.targets.map(t=>`<div class="list-item"><div class="g">
+        <label style="display:flex;gap:8px;align-items:center;margin:0;text-transform:none;font-size:14px;color:var(--text)">
+          <input type="checkbox" style="width:auto" ${t.done?'checked':''} onchange="tgToggle('${t.id}',this.checked)">
+          <span style="${t.done?'text-decoration:line-through;color:var(--muted)':''}">${esc(t.job)}</span></label>
+        <span class="muted">Target: ${fmtN(t.qty)} ${esc(t.unit)} · tenggat: ${dIndo(t.deadline)}${t.note?' · '+esc(t.note):''}</span></div>
+        <div class="a">${canEditAll()?`<button class="btn ghost small" onclick="tgEdit('${t.id}')">✏️</button><button class="btn danger small" onclick="tgDel('${t.id}')">🗑️</button>`:''}</div></div>`).join('')||'<p class="muted">Belum ada target.</p>'}
+    </div>`;
+}
+function tgAdd(){const job=$('tgJob').value.trim();if(!job){toast('Isi pekerjaan target');return}
+  P().targets.push({id:uid(),job,qty:Number($('tgQty').value)||0,unit:$('tgUnit').value.trim(),deadline:$('tgDeadline').value,done:false,note:$('tgNote').value.trim()});
+  save();toast('Target ditambahkan ✓');vProgress()}
+function tgToggle(id,v){const t=P().targets.find(x=>x.id===id);if(t){t.done=v;save();vProgress()}}
+function tgEdit(id){const t=P().targets.find(x=>x.id===id);if(!t)return;
+  openModal('Edit Target',`<label>Pekerjaan</label><input id="teJob" value="${esc(t.job)}">
+  <div class="grid2"><div><label>Volume</label><input id="teQty" type="number" step="any" value="${t.qty}"></div><div><label>Satuan</label><input id="teUnit" value="${esc(t.unit)}"></div></div>
+  <div class="grid2"><div><label>Tenggat</label><input id="teDeadline" type="date" value="${t.deadline||''}"></div><div><label>Catatan</label><input id="teNote" value="${esc(t.note||'')}"></div></div>
+  <div style="height:12px"></div><div class="row"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn green" onclick="teSave('${id}')">💾 Simpan</button></div>`)}
+function teSave(id){const t=P().targets.find(x=>x.id===id);if(!t)return;t.job=$('teJob').value;t.qty=Number($('teQty').value)||0;t.unit=$('teUnit').value;t.deadline=$('teDeadline').value;t.note=$('teNote').value;save();closeModal();vProgress()}
+function tgDel(id){openConfirm('Hapus target ini?',()=>{const p=P();p.targets=p.targets.filter(x=>x.id!==id);save();vProgress()})}
+
+/* ---------- KENDALA ---------- */
+function vKendala(){
+  const p=P();
+  $('main').innerHTML=page('Kendala Pekerjaan','⚠️',`
+    <div class="card"><div class="hdr-line"><b>Lapor Kendala Lapangan</b><span class="pill">cuaca, alat, material, dll</span></div>
+      <label>Kendala / Masalah</label><textarea id="knDesc" rows="3" placeholder="cth: Hujan deras sejak pagi, pengecoran tertunda"></textarea>
+      <div class="grid2"><div><label>Tanggal</label><input id="knDate" type="date" value="${todayISO()}"></div>
+      <div><label>Status</label><select id="knStatus"><option>Baru</option><option>Diproses</option><option>Selesai</option></select></div></div>
+      <label>Solusi / Tindak Lanjut</label><input id="knSol" placeholder="opsional">
+      <div style="height:12px"></div><button class="btn" style="width:100%" onclick="knAdd()">➕ Simpan Kendala</button></div>
+    <div class="card"><b>Daftar Kendala</b>
+      ${p.obstacles.slice().reverse().map(o=>`<div class="list-item"><div class="g"><b>${esc(o.desc)}</b><br>
+        <span class="muted">${dIndo(o.date)} · oleh ${esc(o.by)}</span>
+        ${o.solution?`<br><span style="color:var(--green);font-size:13px">✔ Solusi: ${esc(o.solution)}</span>`:''}</div>
+        <div class="a"><span class="badge ${o.status==='Selesai'?'b-green':o.status==='Diproses'?'b-blue':'b-orange'}">${esc(o.status)}</span>
+        <button class="btn ghost small" onclick="knEdit('${o.id}')">✏️</button><button class="btn danger small" onclick="knDel('${o.id}')">🗑️</button></div></div>`).join('')||'<p class="muted">Tidak ada kendala tercatat.</p>'}
+    </div>`);
+}
+function knAdd(){const d=$('knDesc').value.trim();if(!d){toast('Isi deskripsi kendala');return}
+  P().obstacles.push({id:uid(),desc:d,status:$('knStatus').value,solution:$('knSol').value.trim(),by:curUser().u,date:$('knDate').value||todayISO()});
+  save();toast('Kendala tersimpan ✓');vKendala()}
+function knEdit(id){const o=P().obstacles.find(x=>x.id===id);if(!o)return;
+  openModal('Edit Kendala',`<label>Kendala</label><textarea id="keDesc" rows="3">${esc(o.desc)}</textarea>
+  <div class="grid2"><div><label>Tanggal</label><input id="keDate" type="date" value="${o.date}"></div>
+  <div><label>Status</label><select id="keStatus">${['Baru','Diproses','Selesai'].map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}</select></div></div>
+  <label>Solusi</label><input id="keSol" value="${esc(o.solution||'')}">
+  <div style="height:12px"></div><div class="row"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn green" onclick="knEditSave('${id}')">💾 Simpan</button></div>`)}
+function knEditSave(id){const o=P().obstacles.find(x=>x.id===id);if(!o)return;o.desc=$('keDesc').value;o.date=$('keDate').value;o.status=$('keStatus').value;o.solution=$('keSol').value;save();closeModal();vKendala()}
+function knDel(id){openConfirm('Hapus kendala ini?',()=>{const p=P();p.obstacles=p.obstacles.filter(x=>x.id!==id);save();vKendala()})}
+
+/* ---------- LAPORAN HARIAN + WHATSAPP ---------- */
+function waNumber(){
+  const pr=S.projects.find(x=>x.id===S.activeProject);
+  return (pr&&pr.wa)||S.settings.waOwner||'';
+}
+function buildReport(dateISO){
+  const p=P(),proj=S.projects.find(x=>x.id===S.activeProject),t=dateISO||todayISO();
+  const att=p.attendance.filter(a=>a.date===t)[0];
+  const use=p.usage.filter(u=>u.date===t);
+  const prog=p.progress.filter(g=>g.date===t);
+  const obs=p.obstacles.filter(o=>o.date===t);
+  const tgOpen=p.targets.filter(x=>!x.done), tgDone=p.targets.filter(x=>x.done);
+  let L=`*LAPORAN HARIAN PROYEK*\n_${proj.name}_\nTanggal: ${dIndo(t)}\nDibuat oleh: ${curUser().u}\n━━━━━━━━━━━━━━━\n`;
+  L+=`\n*👷 ABSENSI (${att?att.list.length:0} pekerja)*\n`;
+  if(att&&att.list.length){const c={Hadir:0,Sakit:0,Izin:0,Alpha:0};att.list.forEach(w=>c[w.status]=(c[w.status]||0)+1);L+=`Hadir: ${c.Hadir||0} · Sakit: ${c.Sakit||0} · Izin: ${c.Izin||0} · Alpha: ${c.Alpha||0}\n`;att.list.forEach(w=>L+=`• ${w.name} — ${w.status}${w.note?' ('+w.note+')':''}\n`)}
+  else L+='Belum ada data absensi.\n';
+  L+=`\n*🧱 MATERIAL DIPAKAI (${use.length})*\n`;
+  if(use.length){const m={};use.forEach(u=>{m[u.matId]=(m[u.matId]||0)+Number(u.qty)});Object.entries(m).forEach(([id,q])=>{const mt=getMat(id);L+=`• ${mt?mt.name:id} — ${fmtN(q)} ${mt?mt.unit:''}\n`})}else L+='Tidak ada pemakaian.\n';
+  L+=`\n*📈 PROGRES HARIAN (${prog.length})*\n`;
+  prog.forEach(g=>L+=`• ${g.job} — target ${g.target||'-'} / realisasi ${g.actual||'-'} (${g.pct||0}%)${g.note?' — '+g.note:''}\n`);
+  if(!prog.length)L+='Belum ada update progres.\n';
+  L+=`\n*🎯 TARGET*\nSelesai: ${tgDone.length} · Berjalan: ${tgOpen.length}\n`;
+  tgOpen.slice(0,5).forEach(x=>L+=`⏳ ${x.job} (${fmtN(x.qty)} ${x.unit}${x.deadline?', tenggat '+dIndo(x.deadline):''})\n`);
+  L+=`\n*⚠️ KENDALA (${obs.length})*\n`;
+  obs.forEach(o=>L+=`• [${o.status}] ${o.desc}${o.solution?' → '+o.solution:''}\n`);
+  if(!obs.length)L+='Tidak ada kendala.\n';
+  L+='\n━━━━━━━━━━━━━━━\n_Ayo Bangun.ID Contractor — POS Proyek Konstruksi_';
+  return L;
+}
+function vLaporan(){
+  const rep=buildReport(todayISO());
+  $('main').innerHTML=page('Laporan Harian','📋',`
+    <div class="card"><div class="hdr-line"><b>Pratinjau Laporan — ${dIndo(todayISO())}</b>
+      <input type="date" id="repDate" value="${todayISO()}" style="max-width:150px;display:inline-block" onchange="vLaporanRefresh(this.value)"></div>
+      <div id="repBody" style="white-space:pre-wrap;background:var(--bg3);border-radius:10px;padding:14px;font-size:13.5px;line-height:1.55">${esc(rep)}</div>
+      <div style="height:12px"></div>
+      <div class="row">
+        <button class="btn green" onclick="waSend()">📲 Kirim ke WhatsApp</button>
+        <button class="btn ghost" onclick="copyReport()">📋 Salin Teks</button>
+        <button class="btn ghost" onclick="waSchedule()">⏰ Auto-WA: ${S.settings.autoWa?'AKTIF':'NONAKTIF'}</button>
+      </div>
+      <p class="muted" style="font-size:12px;margin-top:10px">Nomor WA tujuan: <b>${esc(waNumber()||'belum diatur')}</b> — atur di Pengaturan → Proyek / Umum. Auto-WA: laporan otomatis terkirim setiap hari saat login pertama.</p>
+    </div>`);
+}
+function vLaporanRefresh(d){$('repBody').textContent=buildReport(d)}
+function copyReport(){navigator.clipboard.writeText($('repBody').textContent).then(()=>toast('Laporan disalin ✓'))}
+function waSend(){
+  const num=waNumber().replace(/\D/g,'');
+  if(!num){toast('Atur nomor WA dulu di Pengaturan');return}
+  S.settings.lastReport=todayISO();save();
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent($('repBody')? $('repBody').textContent : buildReport(todayISO()))}`,'_blank');
+  toast('Membuka WhatsApp…');
+}
+function waSchedule(){S.settings.autoWa=!S.settings.autoWa;save();vLaporan();toast('Auto-WA '+(S.settings.autoWa?'diaktifkan':'dinonaktifkan'))}
+function maybeAutoWa(){
+  if(!S.settings.autoWa)return;
+  if(S.settings.lastReport===todayISO())return;
+  const num=waNumber().replace(/\D/g,'');if(!num)return;
+  S.settings.lastReport=todayISO();save();
+  setTimeout(()=>{window.open(`https://wa.me/${num}?text=${encodeURIComponent(buildReport(todayISO()))}`,'_blank')},1200);
+}
+
+/* ---------- CSV EXPORT ---------- */
+function exportCSV(kind){
+  const p=P();let rows=[],name='';
+  if(kind==='attendance'){name='absensi';rows=[['Tanggal','Nama','Status','Catatan','Dicatat oleh']];p.attendance.forEach(a=>a.list.forEach(w=>rows.push([a.date,w.name,w.status,w.note||'',a.by])))}
+  else if(kind==='usage'){name='pemakaian';rows=[['Tanggal','Material','Qty','Satuan','Catatan','Oleh']];p.usage.forEach(u=>{const m=getMat(u.matId);rows.push([u.date,m?m.name:'-',u.qty,m?m.unit:'',u.note||'',u.by])})}
+  else if(kind==='stock'){name='stok';rows=[['Material','Kategori','Stok','Satuan']];p.materials.forEach(m=>rows.push([m.name,m.cat,stockQty(m.id),(p.stock[m.id]||{}).unit||m.unit]))}
+  const csv=rows.map(r=>r.map(c=>`"${String(c??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download=`${name}-${todayISO()}.csv`;a.click();
+  toast('CSV diunduh ✓');
+}
+</script>
+<script>
+/* ---------- PENGATURAN (Owner & Admin) ---------- */
+let setTab='proyek';
+function vPengaturan(){
+  if(!isStaff()){location.hash='#dashboard';return}
+  const c=curUser();
+  const tabs=[['proyek','🏗️ Proyek'],['user','👥 User & Password'],['katalog','📚 Katalog'],['sistem','☁️ Sistem & Firebase']];
+  $('main').innerHTML=page('Pengaturan','⚙️',`
+    <div class="tabs">${tabs.map(t=>`<button class="${setTab===t[0]?'on':''}" onclick="setTab='${t[0]}';vPengaturan()">${t[1]}</button>`).join('')}</div>
+    <div id="setBody"></div>`);
+  ({proyek:setProyek,user:setUser,katalog:setKatalog,sistem:setSistem})[setTab](c);
+}
+
+function setProyek(c){
+  $('setBody').innerHTML=`
+    <div class="card"><div class="hdr-line"><b>Tambah Proyek Baru</b><span class="pill">data terpisah per proyek</span></div>
+      <label>Nama Proyek</label><input id="pjName" placeholder="cth: Perumahan Griya Asri Blok B">
+      <label>Keterangan / Deskripsi</label><input id="pjDesc" placeholder="cth: Pembangunan 12 unit rumah tipe 36">
+      <div class="grid2"><div><label>Lokasi</label><input id="pjLoc" placeholder="alamat proyek"></div>
+      <div><label>No. WhatsApp Laporan</label><input id="pjWa" placeholder="cth: 6281234567890"></div></div>
+      <div style="height:12px"></div><button class="btn" style="width:100%" onclick="pjAdd()">➕ Buat Proyek (katalog material otomatis lengkap)</button></div>
+    <div class="card"><b>Daftar Proyek</b>
+      ${S.projects.map(pr=>`<div class="list-item"><div class="g"><b>${esc(pr.name)}</b> ${pr.id===S.activeProject?'<span class="badge b-green">aktif</span>':''}<br>
+        <span class="muted">${esc(pr.desc||'-')} · WA: ${esc(pr.wa||'-')}</span></div>
+        <div class="a"><button class="btn ghost small" onclick="pjEdit('${pr.id}')">✏️</button>
+        <button class="btn danger small" onclick="pjDel('${pr.id}')" ${S.projects.length<=1?'disabled style="opacity:.4"':''}>🗑️</button></div></div>`).join('')}
+    </div>`;
+}
+function pjAdd(){const n=$('pjName').value.trim();if(!n){toast('Isi nama proyek');return}
+  const id=uid();S.projects.push({id,name:n,desc:$('pjDesc').value.trim(),location:$('pjLoc').value.trim(),wa:$('pjWa').value.trim()});
+  S.data[id]=newProjectData(n);S.activeProject=id;save();renderAll();toast('Proyek dibuat ✓');vPengaturan()}
+function pjEdit(id){const pr=S.projects.find(x=>x.id===id);if(!pr)return;
+  openModal('Edit Proyek',`<label>Nama Proyek</label><input id="peName" value="${esc(pr.name)}">
+  <label>Keterangan</label><input id="peDesc" value="${esc(pr.desc||'')}">
+  <div class="grid2"><div><label>Lokasi</label><input id="peLoc" value="${esc(pr.location||'')}"></div>
+  <div><label>No. WhatsApp Laporan</label><input id="peWa" value="${esc(pr.wa||'')}"></div></div>
+  <div style="height:12px"></div><div class="row"><button class="btn ghost" onclick="closeModal()">Batal</button><button class="btn green" onclick="pjEditSave('${id}')">💾 Simpan</button></div>`)}
+function pjEditSave(id){const pr=S.projects.find(x=>x.id===id);if(!pr)return;pr.name=$('peName').value.trim();pr.desc=$('peDesc').value;pr.location=$('peLoc').value;pr.wa=$('peWa').value;save();closeModal();renderAll();toast('Proyek diperbarui ✓');vPengaturan()}
+function pjDel(id){if(S.projects.length<=1){toast('Minimal harus ada 1 proyek');return}
+  openConfirm('Hapus proyek beserta seluruh datanya?',()=>{
+    delete S.data[id];S.projects=S.projects.filter(x=>x.id!==id);
+    if(S.activeProject===id)S.activeProject=S.projects[0].id;save();renderAll();toast('Proyek dihapus');vPengaturan()})}
+
+function setUser(c){
+  const isOwner=c.role==='owner';
+  $('setBody').innerHTML=`
+    <div class="card"><div class="hdr-line"><b>Tambah User</b><span class="pill">admin &amp; owner dapat menambah mandor</span></div>
+      <div class="grid2"><div><label>Username</label><input id="usNewName" placeholder="cth: mandor2 / admin2"></div>
+      <div><label>Password</label><input id="usNewPass" placeholder="password login"></div></div>
+      <div class="grid2"><div><label>Role</label><select id="usNewRole">
+        <option value="mandor">👷 Mandor</option>${isOwner?'<option value="admin">🛡️ Admin</option>':''}</select></div>
+      <div><label>No. WA (opsional)</label><input id="usNewWa" placeholder="628xxx"></div></div>
+      <div style="height:12px"></div><button class="btn" style="width:100%" onclick="usAddNew()">➕ Tambah User</button></div>
+    <div class="card"><b>Daftar User (${S.users.length})</b>
+      ${S.users.map(u=>{const badge=u.role==='owner'?'b-gold':u.role==='admin'?'b-blue':'b-green';
+        const roleName={owner:'OWNER',admin:'ADMIN',mandor:'MANDOR'}[u.role];
+        const bcls=u.role==='owner'?'b-orange':u.role==='admin'?'b-blue':'b-green';
+        return `<div class="list-item"><div class="g"><b>${esc(u.u)}</b> <span class="badge ${bcls}">${roleName}</span><br>
+          <span class="muted">${u.wa?'WA: '+esc(u.wa):'tanpa WA'} · password: ••••••</span></div>
+          <div class="a">
+            ${u.role!=='owner'||isOwner?`<button class="btn ghost small" onclick="usChangePass('${esc(u.u)}')">🔑 Password</button>`:''}
+            ${u.role!=='owner'?`<button class="btn ghost small" onclick="usChangeWa('${esc(u.u)}')">📱</button>`:''}
+            ${u.role!=='owner'?`<button class="btn danger small" onclick="usDelUser('${esc(u.u)}')">🗑️</button>`:''}
+          </div></div>`}).join('')}
+    </div>
+    <div class="card"><b>🔑 Password Owner</b>
+      <p class="muted" style="font-size:13px;margin-bottom:8px">Hanya owner yang dapat mengganti password akun owner (${esc(S.users.find(u=>u.role==='owner').u)}).</p>
+      ${isOwner?`<div class="grid2"><div><label>Password Baru Owner</label><input id="ownNewPass" type="password" placeholder="minimal 4 karakter"></div>
+      <div><label>Ulangi Password</label><input id="ownNewPass2" type="password"></div></div>
+      <div style="height:12px"></div><button class="btn" onclick="ownPassSave()">💾 Ganti Password Owner</button>`:'<span class="badge b-grey">khusus owner</span>'}
+    </div>`;
+}
+function usAddNew(){const u=$('usNewName').value.trim(),p=$('usNewPass').value,role=$('usNewRole').value;
+  if(!u||!p){toast('Isi username & password');return}
+  if(S.users.find(x=>x.u===u)){toast('Username sudah dipakai');return}
+  S.users.push({u,p,role,wa:$('usNewWa').value.trim()});save();toast('User '+u+' ditambahkan ✓');vPengaturan()}
+function usChangePass(u){
+  openModal('Ganti Password — '+u,`<label>Password Baru</label><input id="cpNew" type="password">
+  <div style="height:12px"></div><div class="row"><button class="btn ghost" onclick="closeModal()">Batal</button>
+  <button class="btn green" onclick="usChangePassSave('${esc(u)}')">💾 Simpan</button></div>`)}
+function usChangePassSave(u){const x=S.users.find(y=>y.u===u);const np=$('cpNew').value;if(!x||np.length<4){toast('Password minimal 4 karakter');return}
+  x.p=np;save();closeModal();toast('Password '+u+' diganti ✓');vPengaturan()}
+function usChangeWa(u){const x=S.users.find(y=>y.u===u);if(!x)return;
+  openModal('No. WhatsApp — '+u,`<label>Nomor WA (628xxx)</label><input id="cwNew" value="${esc(x.wa||'')}">
+  <div style="height:12px"></div><div class="row"><button class="btn ghost" onclick="closeModal()">Batal</button>
+  <button class="btn green" onclick="usChangeWaSave('${esc(u)}')">💾 Simpan</button></div>`)}
+function usChangeWaSave(u){const x=S.users.find(y=>y.u===u);if(!x)return;x.wa=$('cwNew').value.trim();save();closeModal();vPengaturan()}
+function usDelUser(u){openConfirm('Hapus user '+u+'?',()=>{S.users=S.users.filter(x=>x.u!==u);save();vPengaturan()})}
+function ownPassSave(){const p1=$('ownNewPass').value,p2=$('ownNewPass2').value;
+  if(p1.length<4){toast('Minimal 4 karakter');return}
+  if(p1!==p2){toast('Password tidak sama');return}
+  const o=S.users.find(x=>x.role==='owner');o.p=p1;save();toast('Password owner diganti ✓');vPengaturan()}
+
+function setKatalog(){
+  matTab='katalog';vMaterial();return;
+}
+
+function setSistem(c){
+  $('setBody').innerHTML=`
+    <div class="card"><div class="hdr-line"><b>☁️ Sinkronisasi Firebase</b><span class="pill" id="fbStat">${FB.on?'TERHUBUNG':'LOKAL'}</span></div>
+      <p class="muted" style="font-size:13px;margin-bottom:8px">Tempel konfigurasi Firebase Realtime Database di bawah agar data tersinkron antar semua perangkat (HP mandor, admin, owner). Tanpa konfigurasi, aplikasi tetap jalan dengan data lokal perangkat.</p>
+      <label>Firebase Config (JSON dari Firebase Console)</label>
+      <textarea id="fbCfg" rows="6" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://NAMA-proyek-default-rtdb.asia-southeast1.firebasedatabase.app","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'>${esc(S.settings.fbConfig||'')}</textarea>
+      <div style="height:12px"></div><div class="row">
+        <button class="btn blue" onclick="fbSave()">💾 Simpan &amp; Hubungkan</button>
+        <button class="btn ghost" onclick="fbPush();toast('Sinkronisasi dikirim…')">🔄 Sinkron Sekarang</button>
+      </div></div>
+    <div class="card"><b>💾 Backup &amp; Restore</b>
+      <div class="row" style="margin-top:8px">
+        <button class="btn ghost" onclick="backupJSON()">⬇️ Unduh Backup (JSON)</button>
+        <button class="btn ghost" onclick="$('restoreFile').click()">⬆️ Restore dari File</button>
+        <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreJSON(event)">
+      </div></div>
+    <div class="card"><b>⚠️ Zona Berbahaya</b>
+      <div class="row" style="margin-top:8px">
+        <button class="btn danger" onclick="resetApp()">🗑️ Reset Semua Data Aplikasi</button>
+      </div></div>`;
+}
+function fbSave(){const v=$('fbCfg').value.trim();S.settings.fbConfig=v;save();
+  if(!window.confirm('Hubungkan ke Firebase sekarang?'))return;
+  FB.app=null;FB.db=null;fbInit();toast('Menghubungkan Firebase…');setTimeout(vPengaturan,1500)}
+function backupJSON(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='backup-ayo-bangun-'+todayISO()+'.json';a.click();toast('Backup diunduh ✓')}
+function restoreJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.users||!d.projects)throw 0;
+    openConfirm('Timpa seluruh data saat ini dengan backup ini?',()=>{S=d;localStorage.setItem(DBKEY,JSON.stringify(S));FB.app=null;FB.db=null;fbInit();renderAll();toast('Restore berhasil ✓')});
+  }catch(e){toast('File backup tidak valid')}};r.readAsText(f)}
+function resetApp(){openConfirm('HAPUS SEMUA DATA? Tindakan tidak dapat dibatalkan. Unduh backup dulu!',()=>{localStorage.removeItem(DBKEY);sessionStorage.removeItem(SESKEY);location.reload()})}
+
+/* ---------- INIT ---------- */
+load();
+if(!location.hash)location.hash='#dashboard';
+if(curUser())enterApp();else $('login').style.display='flex';
+fbInit();
+</script>
+</body>
+</html>
