@@ -1,27 +1,26 @@
-// Firebase Authentication Fixed
-async function loginFirebase(email,password){
- try{
-   const result=await FirebaseAPI.signInWithEmailAndPassword(
-      FirebaseAPI.auth,
-      email,
-      password
-   );
+// Firebase Anonymous Authentication
 
-   return result.user;
+async function loginFirebase(){
+ try{
+    const result = await FirebaseAPI.signInAnonymously(
+      FirebaseAPI.auth
+    );
+
+    return result.user;
 
  }catch(error){
-   console.error("Firebase login error",error.code);
-   throw error;
+    console.error('Firebase anonymous login error', error.code);
+    throw error;
  }
 }
 
 function logoutFirebase(){
- return FirebaseAPI.signOut(FirebaseAPI.auth);
+  return FirebaseAPI.signOut(FirebaseAPI.auth);
 }
 
 function watchAuth(callback){
- FirebaseAPI.onAuthStateChanged(
-   FirebaseAPI.auth,
-   callback
- );
+  FirebaseAPI.onAuthStateChanged(
+    FirebaseAPI.auth,
+    callback
+  );
 }

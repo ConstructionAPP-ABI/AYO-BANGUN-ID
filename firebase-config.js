@@ -3,7 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import { 
  getAuth,
- signInWithEmailAndPassword,
+ signInAnonymously,
  signOut,
  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -39,7 +39,7 @@ const storage=getStorage(firebaseApp);
 
 window.FirebaseAPI={
  auth,database,storage,
- signInWithEmailAndPassword,
+ signInAnonymously,
  signOut,
  onAuthStateChanged,
  ref,set,get,onValue,
