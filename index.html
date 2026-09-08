@@ -370,30 +370,43 @@ function setSync(st){
   else{d.innerHTML='● lokal';d.style.color='var(--muted)'}
 }
 async function fbInit(){
+  const cfg=S.settings.fbConfig;
+  if(!cfg){FB.on=false;setSync('off');return}
   try{
-    const conf={
-      apiKey:"AIzaSyCenf4TeFl64AnMREAkp4z_UvfRvgAD4lg",
-      authDomain:"ayo-bangun-id.firebaseapp.com",
-      databaseURL:"https://ayo-bangun-id-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId:"ayo-bangun-id",
-      storageBucket:"ayo-bangun-id.firebasestorage.app",
-      messagingSenderId:"786734475101",
-      appId:"1:786734475101:web:b68155c2c53b5b4844eab4"
-    };
     if(!window.firebase){
       await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
       await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js');
-      await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js');
+       await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js');
     }
+    let conf; try{conf=JSON.parse(cfg)}catch(e){conf=null}
+    if(!conf||!conf.apiKey){setSync('err');return}
     if(!FB.app){FB.app=firebase.initializeApp(conf)}
     FB.db=firebase.database(FB.app);
-    FB.auth=firebase.auth(FB.app);
-    if(!FB.auth.currentUser){ await FB.auth.signInAnonymously(); }
-    FB.on=true; setSync('conn');
+     FB.auth=firebase.auth(FB.app);
+     if(!FB.auth.currentUser){ await FB.auth.signInAnonymously(); }
+     FB.on=true; setSync('conn');
     FB.db.ref('abpos/state').on('value',snap=>{
       const v=snap.val();
-      if(v&&v.meta&&(!FB.lastLocal||v.meta.updated>FB.lastLocal)){
-        S=v; localStorage.setItem(DBKEY,JSON.stringify(S)); renderAll(); setSync('on');
+      if(v && v.users && v.projects && v.data){
+        const cloudTime=(v.meta&&v.meta.updated)||0;
+        const localTime=(S.meta&&S.meta.updated)||0;
+        if(cloudTime>=localTime){
+          S={
+            ...S,
+            ...v,
+            users:v.users||S.users,
+            projects:v.projects||S.projects,
+            data:v.data||S.data,
+            settings:v.settings||S.settings,
+            meta:v.meta||S.meta
+          };
+          localStorage.setItem(DBKEY,JSON.stringify(S));
+          renderAll();
+        }
+        setSync('on');
+      }else{
+        // database kosong, upload data awal aplikasi
+        fbPush();
       }
     });
     fbPush();
