@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#16232c">
-<title>Ayo Bangun.ID Contractor — POS Proyek Konstruksi</title>
+<title>Ayo Bangun Construction — Construction Project Management System</title>
 <link rel="icon" href="logo-ayo-bangun.jpeg">
 <style>
 :root{
@@ -96,15 +96,26 @@ h2 .ico{font-size:22px}
 .pill{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg3);color:var(--muted)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}}
+
+/* === AYO BANGUN CONSTRUCTION V2 ENHANCEMENT === */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.kpi-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.kpi-card strong{display:block;font-size:24px;color:var(--gold2)}
+.section-title{color:var(--gold2);margin-bottom:10px;font-weight:700}
+.permission-box{background:var(--bg3);padding:12px;border-radius:12px;border:1px solid var(--line)}
+
 </style>
+
+<meta name="application-name" content="Ayo Bangun Construction">
+<meta name="description" content="Construction Project Management System untuk pengelolaan proyek, material, tenaga kerja, progress dan laporan.">
 </head>
 <body>
 
 <div id="login">
   <div class="box">
     <img src="logo-ayo-bangun.jpeg" alt="Ayo Bangun">
-    <h1>Ayo Bangun.ID</h1>
-    <p style="color:var(--muted);font-size:14px;margin-top:2px">Contractor · POS Proyek Konstruksi</p>
+    <h1>Ayo Bangun Construction</h1>
+    <p style="color:var(--muted);font-size:14px;margin-top:2px">Construction Project Management System</p>
     <p class="sub">Developer &amp; Construction</p>
     <div class="card">
       <label>Username</label>
@@ -122,7 +133,7 @@ h2 .ico{font-size:22px}
 <div id="app">
   <div id="topbar">
     <img src="logo-ayo-bangun.jpeg" alt="logo">
-    <div class="t"><b>Ayo Bangun.ID Contractor</b><span id="tbUser"></span></div>
+    <div class="t"><b>Ayo Bangun Construction Contractor</b><span id="tbUser"></span></div>
     <select id="projSel" onchange="switchProject(this.value)" title="Pilih Proyek"></select>
     <span id="syncDot" class="pill" title="Status sinkronisasi">● lokal</span>
     <button class="btn ghost small" onclick="doLogout()" title="Keluar">⏻</button>
@@ -332,10 +343,11 @@ $('lgPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 /* ---------- NAV ---------- */
 const NAV=[
   ['#dashboard','🏠','Dashboard'],
-  ['#absensi','👷','Absensi'],
+  ['#proyek','🏗️','Proyek'],
+  ['#absensi','👷','Tenaga Kerja'],
   ['#material','🧱','Material'],
-  ['#progress','📈','Progres'],
-  ['#kendala','⚠️','Kendala'],
+  ['#progress','📈','Progress'],
+  ['#opname','🧮','Opname'],
   ['#laporan','📋','Laporan'],
   ['#pengaturan','⚙️','Pengaturan']
 ];
@@ -752,7 +764,7 @@ function buildReport(dateISO){
   L+=`\n*⚠️ KENDALA (${obs.length})*\n`;
   obs.forEach(o=>L+=`• [${o.status}] ${o.desc}${o.solution?' → '+o.solution:''}\n`);
   if(!obs.length)L+='Tidak ada kendala.\n';
-  L+='\n━━━━━━━━━━━━━━━\n_Ayo Bangun.ID Contractor — POS Proyek Konstruksi_';
+  L+='\n━━━━━━━━━━━━━━━\n_Ayo Bangun Construction — Construction Project Management System_';
   return L;
 }
 function vLaporan(){
