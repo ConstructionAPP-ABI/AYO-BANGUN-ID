@@ -356,6 +356,23 @@ function isStaff(){const c=curUser();return c&&(c.role==='owner'||c.role==='admi
 function canEditAll(){return isStaff()}
 
 /* ---------- FIREBASE SYNC ---------- */
+
+function normalizeState(s){
+  if(!s) return S;
+  if(s.projects && !Array.isArray(s.projects)){
+    s.projects=Object.values(s.projects);
+  }
+  if(s.users && !Array.isArray(s.users)){
+    s.users=Object.values(s.users);
+  }
+  if(!s.users) s.users=S.users||[];
+  if(!s.projects) s.projects=S.projects||[];
+  if(!s.data) s.data=S.data||{};
+  if(!s.settings) s.settings=S.settings||{};
+  if(!s.meta) s.meta=S.meta||{};
+  return s;
+}
+
 function queueSync(){ clearTimeout(syncTimer); syncTimer=setTimeout(fbPush,900); }
 function fbPush(){
   if(!FB.on||!FB.db||FB.busy)return;
@@ -391,7 +408,7 @@ async function fbInit(){
         const cloudTime=(v.meta&&v.meta.updated)||0;
         const localTime=(S.meta&&S.meta.updated)||0;
         if(cloudTime>=localTime){
-          S={
+          S=normalizeState({
             ...S,
             ...v,
             users:v.users||S.users,
@@ -399,7 +416,7 @@ async function fbInit(){
             data:v.data||S.data,
             settings:v.settings||S.settings,
             meta:v.meta||S.meta
-          };
+          });
           localStorage.setItem(DBKEY,JSON.stringify(S));
           renderAll();
         }
