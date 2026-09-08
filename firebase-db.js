@@ -1,20 +1,20 @@
-/*
- Firebase Database Layer
-*/
+// Firebase Realtime Database Fixed
 
-const COLLECTIONS={
- USERS:"users",
- PROJECTS:"projects",
- MATERIALS:"materials",
- ATTENDANCE:"attendance",
- PROGRESS:"progress",
- REPORTS:"reports"
-};
-
-async function saveProjectCloud(project){
- console.log("Save project cloud",project);
+async function saveCloud(path,data){
+ const dbRef=FirebaseAPI.ref(
+  FirebaseAPI.database,
+  path
+ );
+ return FirebaseAPI.set(dbRef,data);
 }
 
-async function getProjectsCloud(){
- return [];
+function listenCloud(path,callback){
+ const dbRef=FirebaseAPI.ref(
+  FirebaseAPI.database,
+  path
+ );
+
+ return FirebaseAPI.onValue(dbRef,snap=>{
+   callback(snap.val());
+ });
 }

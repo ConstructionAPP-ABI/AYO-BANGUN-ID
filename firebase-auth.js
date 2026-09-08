@@ -1,16 +1,27 @@
-/*
- Ayo Bangun Construction V8
- Firebase Authentication Module
-*/
-
+// Firebase Authentication Fixed
 async function loginFirebase(email,password){
- console.log("Firebase Auth login:",email);
- return {
-  email,
-  role:"user"
- };
+ try{
+   const result=await FirebaseAPI.signInWithEmailAndPassword(
+      FirebaseAPI.auth,
+      email,
+      password
+   );
+
+   return result.user;
+
+ }catch(error){
+   console.error("Firebase login error",error.code);
+   throw error;
+ }
 }
 
 function logoutFirebase(){
- console.log("Firebase logout");
+ return FirebaseAPI.signOut(FirebaseAPI.auth);
+}
+
+function watchAuth(callback){
+ FirebaseAPI.onAuthStateChanged(
+   FirebaseAPI.auth,
+   callback
+ );
 }
