@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#16232c">
-<title>Ayo Bangun Construction — Construction Project Management System</title>
+<title>Ayo Bangun Construction — Construction Project Management System V3</title>
 <link rel="icon" href="logo-ayo-bangun.jpeg">
 <style>
 :root{
@@ -108,6 +108,46 @@ h2 .ico{font-size:22px}
 
 <meta name="application-name" content="Ayo Bangun Construction">
 <meta name="description" content="Construction Project Management System untuk pengelolaan proyek, material, tenaga kerja, progress dan laporan.">
+
+<style>
+/* AYO BANGUN CONSTRUCTION V4 */
+.project-card{
+ background:linear-gradient(135deg,var(--bg2),var(--card));
+ border:1px solid var(--line);
+ border-radius:18px;
+ padding:18px;
+ margin-bottom:14px;
+}
+.contract-box{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+ gap:12px;
+}
+.contract-item{
+ background:var(--bg3);
+ padding:14px;
+ border-radius:12px;
+}
+.contract-item b{
+ display:block;
+ color:var(--gold2);
+ font-size:18px;
+}
+.timeline{
+ border-left:3px solid var(--gold);
+ padding-left:15px;
+}
+.permission{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+ gap:8px;
+}
+.permission label{
+ background:var(--bg3);
+ padding:10px;
+ border-radius:10px;
+}
+</style>
 </head>
 <body>
 
@@ -944,6 +984,195 @@ load();
 if(!location.hash)location.hash='#dashboard';
 if(curUser())enterApp();else $('login').style.display='flex';
 fbInit();
+</script>
+
+<script>
+/* ==========================================================
+   AYO BANGUN CONSTRUCTION V3 MODULE EXTENSION
+   Project Contract + User Permission + Documentation
+   ========================================================== */
+
+function projectContractTemplate(){
+ return {
+   contractNo:"",
+   ownerProject:"",
+   contractValue:0,
+   startDate:"",
+   endDate:"",
+   duration:"",
+   paymentTerms:[],
+   documents:[]
+ };
+}
+
+function ensureProjectStructure(){
+ if(!S.projects)return;
+ S.projects.forEach(p=>{
+   if(!S.data[p.id]) return;
+   let d=S.data[p.id];
+   if(!d.contract)d.contract=projectContractTemplate();
+   if(!d.documents)d.documents=[];
+   if(!d.suppliers)d.suppliers=[];
+   if(!d.materialIn)d.materialIn=[];
+   if(!d.workLogs)d.workLogs=[];
+ });
+ save();
+}
+
+function constructionProjectSummary(){
+ const p=P();
+ return {
+   workers:p.workers?.length||0,
+   materials:p.materials?.length||0,
+   progress:p.progress?.length||0,
+   obstacles:p.obstacles?.length||0
+ };
+}
+
+function addProjectContract(){
+ const p=P();
+ openModal("Data SPK / Kontrak Proyek",`
+ <label>Nomor SPK</label>
+ <input id="ctNo" value="${p.contract?.contractNo||""}">
+ <label>Nilai Kontrak</label>
+ <input id="ctValue" type="number" value="${p.contract?.contractValue||0}">
+ <label>Tanggal Mulai</label>
+ <input id="ctStart" type="date" value="${p.contract?.startDate||""}">
+ <label>Tanggal Selesai</label>
+ <input id="ctEnd" type="date" value="${p.contract?.endDate||""}">
+ <br><br>
+ <button class="btn green" onclick="saveContract()">Simpan Kontrak</button>
+ `);
+}
+
+function saveContract(){
+ const p=P();
+ p.contract={
+  contractNo:$("ctNo").value,
+  contractValue:Number($("ctValue").value)||0,
+  startDate:$("ctStart").value,
+  endDate:$("ctEnd").value,
+  documents:[]
+ };
+ save();
+ closeModal();
+ toast("Data kontrak tersimpan");
+}
+
+function addMaterialIncoming(){
+ const p=P();
+ if(!p.materialIn)p.materialIn=[];
+ p.materialIn.push({
+   id:uid(),
+   date:todayISO(),
+   note:"Material masuk baru",
+   by:curUser().u
+ });
+ save();
+ toast("Material masuk tercatat");
+}
+
+ensureProjectStructure();
+
+</script>
+
+
+<script>
+/* ==========================================================
+ AYO BANGUN CONSTRUCTION V4
+ Project Management + Permission Foundation
+ ========================================================== */
+
+function createProjectStructure(){
+ return {
+   id:uid(),
+   name:"",
+   desc:"",
+   location:"",
+   contract:{
+     contractNo:"",
+     contractValue:0,
+     startDate:"",
+     endDate:"",
+     paymentTerms:[]
+   },
+   members:[],
+   documents:[],
+   photos:[],
+   created:todayISO()
+ };
+}
+
+function addConstructionUser(){
+ openModal("Tambah User Proyek",`
+ <label>Nama User</label>
+ <input id="usrName">
+
+ <label>Username</label>
+ <input id="usrUsername">
+
+ <label>Role</label>
+ <select id="usrRole">
+ <option>admin</option>
+ <option>supervisor</option>
+ <option>mandor</option>
+ </select>
+
+ <label>Permission</label>
+ <div class="permission">
+ <label><input type="checkbox"> Dashboard</label>
+ <label><input type="checkbox"> Absensi</label>
+ <label><input type="checkbox"> Material</label>
+ <label><input type="checkbox"> Progress</label>
+ <label><input type="checkbox"> Laporan</label>
+ </div>
+
+ <br>
+ <button class="btn green" onclick="saveConstructionUser()">
+ Simpan User
+ </button>
+ `);
+}
+
+function saveConstructionUser(){
+ if(!S.users) S.users=[];
+ S.users.push({
+   u:$("usrUsername").value,
+   p:"1234",
+   role:$("usrRole").value,
+   name:$("usrName").value
+ });
+ save();
+ closeModal();
+ toast("User proyek ditambahkan");
+}
+
+function projectDashboardMetric(){
+ const p=P();
+ return `
+ <div class="contract-box">
+ <div class="contract-item">
+ <span class="muted">Tenaga Kerja</span>
+ <b>${p.workers.length}</b>
+ </div>
+
+ <div class="contract-item">
+ <span class="muted">Material</span>
+ <b>${p.materials.length}</b>
+ </div>
+
+ <div class="contract-item">
+ <span class="muted">Progress Update</span>
+ <b>${p.progress.length}</b>
+ </div>
+
+ <div class="contract-item">
+ <span class="muted">Kendala</span>
+ <b>${p.obstacles.length}</b>
+ </div>
+ </div>`;
+}
+
 </script>
 </body>
 </html>
