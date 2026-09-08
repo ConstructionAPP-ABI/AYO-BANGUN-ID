@@ -349,7 +349,39 @@ function seed(){
   };
 }
 function load(){ try{S=JSON.parse(localStorage.getItem(DBKEY))||seed()}catch(e){S=seed()} if(!S.data)S=seed(); }
-function P(){ if(!S.data[S.activeProject])S.data[S.activeProject]=newProjectData(''); return S.data[S.activeProject]; }
+function repairProjectData(p){
+  p=p||{};
+  const defaults=newProjectData('');
+  [
+    'materials','usage','opname','workers','attendance',
+    'progress','targets','obstacles','expenses','notes'
+  ].forEach(k=>{
+    if(!Array.isArray(p[k])) p[k]=defaults[k]||[];
+  });
+  if(!p.stock || typeof p.stock!=='object') p.stock={};
+  return p;
+}
+
+function repairState(){
+  if(!S || typeof S!=='object') S=seed();
+  if(!Array.isArray(S.projects)) S.projects=[];
+  if(!Array.isArray(S.users)) S.users=[];
+  if(!S.data || typeof S.data!=='object') S.data={};
+  Object.keys(S.data).forEach(k=>S.data[k]=repairProjectData(S.data[k]));
+  if(!S.activeProject || !S.data[S.activeProject]){
+    const p=S.projects[0];
+    if(p) S.activeProject=p.id;
+  }
+  if(!S.settings) S.settings={};
+  if(!S.meta) S.meta={};
+  return S;
+}
+
+function P(){
+  repairState();
+  if(!S.data[S.activeProject])S.data[S.activeProject]=newProjectData('');
+  return repairProjectData(S.data[S.activeProject]);
+}
 function save(){ localStorage.setItem(DBKEY,JSON.stringify(S)); queueSync(); }
 function curUser(){ try{return JSON.parse(sessionStorage.getItem(SESKEY))}catch(e){return null} }
 function isStaff(){const c=curUser();return c&&(c.role==='owner'||c.role==='admin')}
@@ -376,6 +408,7 @@ function normalizeState(s){
   if(!s.data) s.data=S.data||{};
   if(!s.settings) s.settings=S.settings||{};
   if(!s.meta) s.meta=S.meta||{};
+  Object.keys(s.data).forEach(k=>s.data[k]=repairProjectData(s.data[k]));
   return s;
 }
 function mergeState(local, cloud){
