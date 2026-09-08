@@ -356,23 +356,6 @@ function isStaff(){const c=curUser();return c&&(c.role==='owner'||c.role==='admi
 function canEditAll(){return isStaff()}
 
 /* ---------- FIREBASE SYNC ---------- */
-
-function normalizeState(s){
-  if(!s) return S;
-  if(s.projects && !Array.isArray(s.projects)){
-    s.projects=Object.values(s.projects);
-  }
-  if(s.users && !Array.isArray(s.users)){
-    s.users=Object.values(s.users);
-  }
-  if(!s.users) s.users=S.users||[];
-  if(!s.projects) s.projects=S.projects||[];
-  if(!s.data) s.data=S.data||{};
-  if(!s.settings) s.settings=S.settings||{};
-  if(!s.meta) s.meta=S.meta||{};
-  return s;
-}
-
 function queueSync(){ clearTimeout(syncTimer); syncTimer=setTimeout(fbPush,900); }
 function fbPush(){
   if(!FB.on||!FB.db||FB.busy)return;
@@ -386,9 +369,29 @@ function setSync(st){
   else if(st==='conn'){d.innerHTML='● terhubung';d.style.color='var(--blue)'}
   else{d.innerHTML='● lokal';d.style.color='var(--muted)'}
 }
+function normalizeState(s){
+  if(!s) return S;
+  if(s.projects && !Array.isArray(s.projects)) s.projects=Object.values(s.projects);
+  if(s.users && !Array.isArray(s.users)) s.users=Object.values(s.users);
+  if(!s.data) s.data=S.data||{};
+  if(!s.settings) s.settings=S.settings||{};
+  if(!s.meta) s.meta=S.meta||{};
+  return s;
+}
+function mergeState(local, cloud){
+  return normalizeState({
+    ...local,
+    ...cloud,
+    users: cloud.users || local.users,
+    projects: cloud.projects || local.projects,
+    data: cloud.data || local.data,
+    settings: cloud.settings || local.settings,
+    meta: cloud.meta || local.meta
+  });
+}
+
 async function fbInit(){
-  const cfg=S.settings.fbConfig;
-  if(!cfg){FB.on=false;setSync('off');return}
+  const cfg=S.settings.fbConfig || JSON.stringify({apiKey:'AIzaSyCenf4TeFl64AnMREAkp4z_UvfRvgAD4lg',authDomain:'ayo-bangun-id.firebaseapp.com',projectId:'ayo-bangun-id',databaseURL:'https://ayo-bangun-id-default-rtdb.asia-southeast1.firebasedatabase.app',storageBucket:'ayo-bangun-id.firebasestorage.app',messagingSenderId:'786734475101',appId:'1:786734475101:web:b68155c2c53b5b4844eab4',measurementId:'G-W30TB6186R'});
   try{
     if(!window.firebase){
       await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
@@ -408,15 +411,7 @@ async function fbInit(){
         const cloudTime=(v.meta&&v.meta.updated)||0;
         const localTime=(S.meta&&S.meta.updated)||0;
         if(cloudTime>=localTime){
-          S=normalizeState({
-            ...S,
-            ...v,
-            users:v.users||S.users,
-            projects:v.projects||S.projects,
-            data:v.data||S.data,
-            settings:v.settings||S.settings,
-            meta:v.meta||S.meta
-          });
+          S=mergeState(S,v);
           localStorage.setItem(DBKEY,JSON.stringify(S));
           renderAll();
         }
