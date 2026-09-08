@@ -1,0 +1,9 @@
+{
+  "name": "Ayo Bangun Construction Contractor",
+  "short_name": "Ayo Bangun",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f1b24",
+  "theme_color": "#dca73a",
+  "icons": []
+}
