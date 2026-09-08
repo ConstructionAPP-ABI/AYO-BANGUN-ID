@@ -551,8 +551,24 @@ function vDashboard(){
 /* ---------- ABSENSI ---------- */
 function vAbsensi(sub){
   const p=P(), t=todayISO();
+
+  // repair old Firebase attendance schema
+  if(!Array.isArray(p.attendance)) p.attendance=[];
+  p.attendance=p.attendance.map(a=>({
+    id:a.id||uid(),
+    date:a.date||t,
+    list:Array.isArray(a.list)?a.list:[],
+    by:a.by||''
+  }));
+
   let att=p.attendance.filter(a=>a.date===t)[0];
-  if(!att){att={id:uid(),date:t,list:[],by:curUser().u};p.attendance.push(att);save()}
+  if(!att){
+    att={id:uid(),date:t,list:[],by:(curUser()||{}).u||''};
+    p.attendance.push(att);
+    save();
+  }
+
+  if(!Array.isArray(att.list)) att.list=[];
   const dateAtt=p.attendance.slice().sort((a,b)=>b.date.localeCompare(a.date));
   $('main').innerHTML=page('Absensi Tenaga Kerja','👷',`
     <div class="card">
