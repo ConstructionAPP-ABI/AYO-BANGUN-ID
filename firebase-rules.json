@@ -1,12 +1,9 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null",
     "abpos": {
       "state": {
         ".read": "auth != null",
-        ".write": "auth != null",
-        ".validate": "newData.hasChildren(['users','projects','data','settings','meta'])"
+        ".write": "auth != null"
       }
     }
   }
