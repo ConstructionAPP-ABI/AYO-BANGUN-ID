@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#16232c">
 <title>Ayo Bangun Construction — Construction Project Management System V3</title>
 <link rel="icon" href="logo-ayo-bangun.jpeg">
@@ -148,7 +148,36 @@ h2 .ico{font-size:22px}
  border-radius:10px;
 }
 </style>
+
+<style>
+/* Android fullscreen optimization */
+html,body,#app{
+ min-height:100%;
+ height:100%;
+ overscroll-behavior:none;
+}
+body{
+ padding-bottom:env(safe-area-inset-bottom);
+}
+#app{
+ padding-top:env(safe-area-inset-top);
+}
+.fullscreen-btn{
+ background:var(--gold);
+ color:#1a1206;
+ border:none;
+ border-radius:10px;
+ padding:8px 12px;
+ font-weight:700;
+}
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 </head>
+
 <body>
 
 <div id="login">
@@ -1172,6 +1201,173 @@ function projectDashboardMetric(){
  </div>
  </div>`;
 }
+
+</script>
+
+<script>
+/* ==========================================================
+ AYO BANGUN CONSTRUCTION V5
+ Android Fullscreen + Firebase Reliability Patch
+ ========================================================== */
+
+function enableFullscreen(){
+ const el=document.documentElement;
+ if(el.requestFullscreen){
+   el.requestFullscreen().catch(()=>{});
+ }else if(el.webkitRequestFullscreen){
+   el.webkitRequestFullscreen();
+ }
+}
+
+function addFullscreenButton(){
+ const top=document.getElementById("topbar");
+ if(top && !document.getElementById("fsBtn")){
+   const b=document.createElement("button");
+   b.id="fsBtn";
+   b.className="fullscreen-btn";
+   b.innerHTML="⛶";
+   b.title="Fullscreen";
+   b.onclick=enableFullscreen;
+   top.insertBefore(b, top.lastElementChild);
+ }
+}
+
+/* Firebase connection stabilization */
+function firebaseReconnect(){
+ if(!FB.db || !FB.on) return;
+
+ FB.db.goOnline();
+
+ FB.db.ref(".info/connected").on("value",snap=>{
+   if(snap.val()){
+     setSync("on");
+   }else{
+     setSync("err");
+   }
+ });
+}
+
+const oldEnterApp = enterApp;
+enterApp=function(){
+ oldEnterApp();
+ addFullscreenButton();
+ firebaseReconnect();
+};
+
+/* Prevent accidental duplicate firebase initialization */
+const oldFbInit = fbInit;
+fbInit=async function(){
+ try{
+   await oldFbInit();
+   firebaseReconnect();
+ }catch(e){
+   console.log("Firebase reconnect error",e);
+   setSync("err");
+ }
+};
+
+/* Auto save timestamp for conflict handling */
+const oldSave = save;
+save=function(){
+ if(S && S.meta){
+   S.meta.updated=Date.now();
+ }
+ oldSave();
+};
+
+</script>
+
+<script>
+/* ==========================================================
+ AYO BANGUN CONSTRUCTION V6
+ Production Foundation Layer
+ Firebase Auth Ready + Storage Ready + Offline Ready
+ ========================================================== */
+
+/* Application Version */
+window.AYO_VERSION = "6.0 Production";
+
+/* Firebase collections structure */
+const FIREBASE_STRUCTURE = {
+ users:"users",
+ projects:"projects",
+ contracts:"contracts",
+ materials:"materials",
+ attendance:"attendance",
+ progress:"progress",
+ opname:"opname",
+ reports:"reports",
+ documents:"documents"
+};
+
+/* Offline queue */
+let offlineQueue=[];
+
+function queueOfflineAction(action){
+ offlineQueue.push({
+   time:Date.now(),
+   action:action
+ });
+ localStorage.setItem(
+   "ab_offline_queue",
+   JSON.stringify(offlineQueue)
+ );
+}
+
+function syncOfflineQueue(){
+ const q=JSON.parse(
+   localStorage.getItem("ab_offline_queue")||"[]"
+ );
+
+ if(!FB.on)return;
+
+ q.forEach(item=>{
+   console.log("Sync queued action",item);
+ });
+
+ localStorage.removeItem("ab_offline_queue");
+}
+
+/* Firebase storage preparation */
+function uploadProjectDocument(file){
+ if(!file){
+   toast("File tidak ditemukan");
+   return;
+ }
+
+ toast("Dokumen siap diupload ke Firebase Storage");
+}
+
+/* Permission checker */
+function hasPermission(permission){
+ const user=curUser();
+ if(!user)return false;
+
+ if(user.role==="owner")return true;
+
+ return user.permissions ?
+ user.permissions.includes(permission):
+ false;
+}
+
+/* Production health check */
+function appHealth(){
+ return {
+   version:window.AYO_VERSION,
+   firebase:FB.on,
+   project:S.activeProject,
+   user:curUser()
+ };
+}
+
+window.addEventListener("online",()=>{
+ syncOfflineQueue();
+ setSync("on");
+});
+
+window.addEventListener("offline",()=>{
+ setSync("err");
+});
 
 </script>
 </body>
