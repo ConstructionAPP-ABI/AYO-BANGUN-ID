@@ -376,11 +376,15 @@ async function fbInit(){
     if(!window.firebase){
       await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
       await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js');
+       await loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js');
     }
     let conf; try{conf=JSON.parse(cfg)}catch(e){conf=null}
     if(!conf||!conf.apiKey){setSync('err');return}
     if(!FB.app){FB.app=firebase.initializeApp(conf)}
-    FB.db=firebase.database(FB.app); FB.on=true; setSync('conn');
+    FB.db=firebase.database(FB.app);
+     FB.auth=firebase.auth(FB.app);
+     if(!FB.auth.currentUser){ await FB.auth.signInAnonymously(); }
+     FB.on=true; setSync('conn');
     FB.db.ref('abpos/state').on('value',snap=>{
       const v=snap.val();
       if(v&&v.meta&&(!FB.lastLocal||v.meta.updated>FB.lastLocal)){
